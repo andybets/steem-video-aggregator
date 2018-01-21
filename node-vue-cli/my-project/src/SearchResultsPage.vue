@@ -5,7 +5,7 @@
       <h4 v-if="videos.length>0" style="padding-left:10px">Search Results matching '{{ $route.params.search_terms }}'<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <h4 v-else style="padding-left:10px">Sorry, No Search Results matching '{{ $route.params.search_terms }}'<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <b-row>
-        <b-col sm="12" md="6" lg="4" xl="3" v-for="v in videos" :key="v.video_id">
+        <b-col sm="12" md="6" lg="4" xl="3" v-for="v in videos" :key="v.author + v.permlink">
             <div style="padding-bottom:15px">
                 <div style="position:relative;padding:5px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
