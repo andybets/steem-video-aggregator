@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Mac custom attributes file (Desktop Service Store)
+.DS_Store
+
+# PyCharm files
+.idea/
+
+# Initialization file for Postgress Docker Image
+/postgresql/Dockerfile
+
+# Coverage output
+/web/.coverage
+/web/htmlcov/
+
+# credentials and SSL certs
+*.env
+*~
+*.pem
+
+# miscellaneous
+monitor-log.txt
+
+# node modules generated in docker build process
+/node-vue-cli/node_modules/

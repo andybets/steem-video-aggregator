@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+    <meta charset="utf-8">
+    <title>multi.tube</title>
+
+    <link rel="icon" type="image/png" href="/dist/images/site-icon.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/dist/images/site-icon.png" sizes="32x32">
+
+    <link rel="stylesheet" href="/dist/main.css">
+    <style>
+        a {
+            color: #000066!important;
+        }
+        html {
+            overflow-x: hidden;
+        }
+        body {
+            overflow-x: hidden;
+            position: relative;
+        /*    height: 100%; may be needed for IOS 9? */
+            min-height:900px;
+            background: linear-gradient(#FAFAFA, #FAFAFA);
+            font-family: 'Roboto', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        }
+        h1, h2, h3, h4, h5 {
+            font-weight: bold;
+        }
+    </style>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112492836-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-112492836-1');
+    </script>
+
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="/dist/build.js"></script>
+  </body>
+</html>

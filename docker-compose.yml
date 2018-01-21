@@ -1,0 +1,69 @@
+version: '2.3'
+
+services:
+  web:
+    restart: always
+    build: ./web
+    expose:
+      - "8000"
+    volumes:
+      - ./web:/home/flask/app/web
+    env_file:
+      - ./credentials.env
+    command: "/usr/local/bin/gunicorn -w 2 -b :8000 project:app"
+    depends_on:
+      - postgres
+
+  vue:
+    build: ./node-vue-cli
+    expose:
+      - "8080"
+    volumes:
+      - ./node-vue-cli:/code
+    working_dir: /code/my-project
+    command: npm run dev
+
+  blockchain_monitor:
+    build: ./web
+    volumes:
+      - ./web:/home/flask/app/web
+    env_file:
+      - ./credentials.env
+    command: /usr/local/bin/python3.6 /home/flask/app/web/project/blockchain-monitor.py
+    depends_on:
+      - postgres
+
+  post_info_updater:
+    build: ./web
+    volumes:
+      - ./web:/home/flask/app/web
+    env_file:
+      - ./credentials.env
+    command: /usr/local/bin/python3.6 /home/flask/app/web/project/post-info-updater.py
+    depends_on:
+      - postgres
+
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - "81:80"
+      - "443:443"
+    volumes:
+      - ./web/project/static:/usr/src/app/web/project/static
+      - ./fullchain.pem:/etc/ssl/fullchain.pem
+      - ./privkey.pem:/etc/ssl/privkey.pem
+#      - ./node-vue-cli/my-project:/usr/src/app/node-vue-cli/my-project
+    depends_on:
+      - web
+
+  postgres:
+    restart: always
+    image: "postgres:9.6"
+    cpus: 0.5
+    env_file:
+      - ./credentials.env
+    volumes:
+      - "../db:/var/lib/postgresql/data"
+    expose:
+      - "5432"
