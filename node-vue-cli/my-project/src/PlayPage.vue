@@ -68,14 +68,20 @@
                 <b-container fluid class="commentspanel">
                   <b-row>
                     <b-col>
-                      <h5>Comments</h5>
+                      <b-container class="pt-2">
+                        <b-row no-gutters>
+                          <b-col cols="auto">
+                            <h5>Comments</h5>
+                          </b-col>
+                        </b-row>
+                      </b-container>
                     </b-col>
                   </b-row>
 
                   <!-- load 1st level comments with main content, but other levels as requested //-->
                   <b-row v-for="comment in info.comments" :key="comment.permlink">
                     <b-col>
-                      <b-container class="py-2">
+                      <b-container class="pt-3 pb-2">
                         <b-row no-gutters>
                           <b-col cols="auto">
                             <b-img :src="'https://img.busy.org/@' + comment.author + '?width=40&height=40'" rounded="circle" blank-color="#777"/>
@@ -229,8 +235,10 @@ a {
 
 .commentspanel {
   border: 1px solid #EAEAEA;
-  padding: 1em;
-  margin-top:10px;
+  padding: 0px;
+  padding-top: 0.5em;
+  padding-bottom: 2em;
+  margin-top:1em;
   background-color: white;
 }
 

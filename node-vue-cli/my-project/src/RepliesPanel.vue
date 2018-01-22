@@ -2,7 +2,7 @@
   <div>
     <div class="action-link" @click="fetchData" v-show="!loaded">Show Replies</div>
     <div v-show="loaded">
-      <b-container fluid class="commentspanel">
+      <b-container fluid class="repliespanel">
         <b-row v-for="comment in replies" :key="comment.permlink">
           <b-col>
             <b-container class="py-2 px-0">
@@ -63,8 +63,10 @@
 </script>
 
 <style>
-  .commentspanel {
+  .repliespanel {
     padding: 0em;
+    padding-top: 0.7em;
+    padding-bottom: 0.05em;
     border: none;
   }
 </style>
