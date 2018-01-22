@@ -258,7 +258,6 @@ def video(author=None, permlink=None):
     else:
         return 'Video Not Found for: ' + str(author) + '/' + str(permlink)
 
-# todo - test and employ when clicking comment reply links
 @app.route('/f/api/replies/@<author>/<permlink>')
 def replies(author=None, permlink=None):
     replies = steem.get_content_replies(author, permlink)

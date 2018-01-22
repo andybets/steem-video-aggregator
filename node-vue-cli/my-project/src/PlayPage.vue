@@ -72,6 +72,7 @@
                     </b-col>
                   </b-row>
 
+                  <!-- load 1st level comments with main content, but other levels as requested //-->
                   <b-row v-for="comment in info.comments" :key="comment.permlink">
                     <b-col>
                       <b-container class="py-2">
@@ -93,8 +94,7 @@
                               </b-row>
                               <b-row>
                                 <b-col>
-                                  <div v-if="comment.reply_count == 1"><b>Show reply</b></div>
-                                  <div v-else-if="comment.reply_count > 1"><b>Show {{ comment.reply_count }} replies</b></div>
+                                  <replies-panel v-if="comment.reply_count>0" :author="comment.author" :permlink="comment.permlink" :reply_count="comment.reply_count"></replies-panel>
                                 </b-col>
                               </b-row>
 
@@ -106,7 +106,8 @@
 
                     </b-col>
                   </b-row>
-                </b-container>    
+                </b-container>
+
               </b-col>
             </b-row>
           </b-container>    
@@ -231,5 +232,11 @@ a {
   padding: 1em;
   margin-top:10px;
   background-color: white;
+}
+
+.action-link {
+  color: #000066;
+  cursor: pointer;
+  font-weight: 800;
 }
 </style>

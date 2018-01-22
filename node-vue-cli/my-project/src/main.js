@@ -9,6 +9,7 @@ import HeaderBar from './HeaderBar.vue'
 import PlayerYoutube from './PlayerYoutube.vue'
 import PlayerDtube from './PlayerDtube.vue'
 import PlayerDlive from './PlayerDlive.vue'
+import RepliesPanel from './RepliesPanel.vue'
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
@@ -26,6 +27,7 @@ Vue.component('icon', Icon);
 Vue.component('player-youtube', PlayerYoutube);
 Vue.component('player-dtube', PlayerDtube);
 Vue.component('player-dlive', PlayerDlive);
+Vue.component('replies-panel', RepliesPanel);
 
 export const bus = new Vue();
 

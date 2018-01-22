@@ -39,12 +39,15 @@ def get_age_string(dt):
 
 def get_duration_string(seconds):
     try:
-        m, s = divmod(seconds, 60)
-        h, m = divmod(m, 60)
-        if h > 0:
-            return "%d:%02d:%02d" % (h, m, s)
+        if seconds > 0:
+            m, s = divmod(seconds, 60)
+            h, m = divmod(m, 60)
+            if h > 0:
+                return "%d:%02d:%02d" % (h, m, s)
+            else:
+                return "%d:%02d" % (m, s)
         else:
-            return "%d:%02d" % (m, s)
+            return ''
     except Exception as e:
         return '' # duration not available
 
