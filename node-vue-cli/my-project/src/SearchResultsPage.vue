@@ -10,7 +10,7 @@
                 <div style="position:relative;padding:5px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url" style="height: 17vh;"/> 
+                        <b-img @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url" class="thumbnail-image"/> 
                     </div>
                 </div>
                 <div class="video-info-panel">
@@ -205,6 +205,18 @@ a {
   .video-horizontal-panel {
     padding-left:55px;
     padding-right:55px;
+  }
+}
+
+/* enlarge thumbnail height for phones */
+@media (max-width: 767px) {
+  .thumbnail-image {
+    height: 25vh;
+  }
+}
+@media (min-width: 768px) {
+  .thumbnail-image {
+    height: 17vh;
   }
 }
 
