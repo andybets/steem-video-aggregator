@@ -193,8 +193,10 @@ def new_videos():
     except Exception as e:
         return str(e)
 
+@app.route('/f/api/search/<search_terms>/<limit>', methods=['GET', 'POST'])
 @app.route('/f/api/search/<search_terms>', methods=['GET', 'POST'])
-def search(search_terms):
+def search(search_terms, limit='50'):
+    limit = int(limit)
     if request.method == 'GET':
         filter_data = json.loads(request.args.get("json"))
     elif request.method == 'POST':
@@ -208,9 +210,10 @@ def search(search_terms):
         query = db.session.query(Post).filter(author_filter | title_filter | tags_filter)
         query = apply_filter_to_query(query, filter_data)
         query = apply_sort_to_query(query, filter_data)
-        query = query.limit(100)
+        query = query.limit(limit*2) # get more records than needed as post query filters may remove some
         df = pd.read_sql(query.statement, db.session.bind)
         df = create_video_summary_fields(df, filter_data)
+        df = df.head(limit)
         return df.to_json(orient='records')
     except Exception as e:
         return jsonify([])

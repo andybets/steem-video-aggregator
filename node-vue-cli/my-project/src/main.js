@@ -15,6 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
 
 import VueCarousel from 'vue-carousel';
+import InfiniteLoading from 'vue-infinite-loading';
 
 Vue.use(BootstrapVue);
 Vue.use(vueResource);
@@ -23,6 +24,7 @@ Vue.use(VueCarousel);
 
 var Icon = require('vue-awesome');
 Vue.component('icon', Icon);
+Vue.component('infinite-loading', InfiniteLoading);
 
 Vue.component('player-youtube', PlayerYoutube);
 Vue.component('player-dtube', PlayerDtube);

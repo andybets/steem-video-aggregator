@@ -5,6 +5,7 @@
       <h4 v-if="videos.length>0" style="padding-left:10px">Search Results matching '{{ $route.params.search_terms }}'<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <h4 v-else style="padding-left:10px">Sorry, No Search Results matching '{{ $route.params.search_terms }}'<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <b-row>
+
         <b-col sm="12" md="6" lg="4" xl="3" v-for="v in videos" :key="v.author + v.permlink">
             <div style="padding-bottom:15px">
                 <div style="position:relative;padding:5px">
@@ -34,6 +35,9 @@
                 </div>
             </div>
         </b-col>
+
+        <infinite-loading ref="infiniteLoading" @infinite="infiniteHandler"></infinite-loading>
+
       </b-row>
     </b-container>
 
@@ -71,6 +75,8 @@
         this.$router.push('/@' + author + '/' + permlink);
       },
       fetchData: function() {
+        this.search_results_target = 50;
+        this.$refs.infiniteLoading.stateChanger.reset();
         var filter_data = {
               filter_age_selection: this.$globals.filter_age_selection,
               filter_type_selection: this.$globals.filter_type_selection,
@@ -85,7 +91,7 @@
         setTimeout(function() {
           var rrr = rr;
 //          console.log(rr.$route.params.search_terms);
-          rr.$http.post('/f/api/search/' + rr.$route.params.search_terms, filter_data)
+          rr.$http.post('/f/api/search/' + rr.$route.params.search_terms + '/' + rr.search_results_target, filter_data)
            .then(response => {
 //            console.log(response.data);
             rrr.videos = response.data.filter(function(result) {
@@ -94,11 +100,41 @@
           });
         }, 100);
 
-      }
+      },
+
+      infiniteHandler($state) {
+        this.search_results_target += 50;
+        var filter_data = {
+              filter_age_selection: this.$globals.filter_age_selection,
+              filter_type_selection: this.$globals.filter_type_selection,
+              filter_duration_selection: this.$globals.filter_duration_selection,
+              filter_sort_selection: this.$globals.filter_sort_selection,            
+              filter_exclude_old_video: this.$globals.filter_exclude_old_video,
+              filter_exclude_nsfw: this.$globals.filter_exclude_nsfw,
+              filter_reputation_active: this.$globals.filter_reputation_active,
+              filter_quick_play_enabled: this.$globals.filter_quick_play_enabled
+            }
+        // gets whole new results set rather than extending, as new entries could make using offsets difficult
+        this.$http.post('/f/api/search/' + this.$route.params.search_terms + '/' + this.search_results_target, filter_data)
+         .then(response => {
+            console.log(response.body.length);
+            this.videos = response.data.filter(function(result) {
+              return true;
+            });
+            // if server didn't send requested number of videos, prevent further load attempts
+            if (this.videos.length < this.search_results_target) {
+              $state.complete();
+            } else {
+              $state.loaded();
+            }
+          })
+       }
+
     },
     data () {
       return {
-        videos: []
+        videos: [],
+        search_results_target: 50
     }
   },
   mounted: function() {
@@ -199,6 +235,10 @@ a {
   padding-right:0px;
 }
 
+.infinite-status-prompt {
+  display:none;
+}
+
 
 /* make space for video arrows */
 @media (min-width: 768px) {
@@ -219,6 +259,8 @@ a {
     height: 17vh;
   }
 }
+
+
 
 </style>
 
