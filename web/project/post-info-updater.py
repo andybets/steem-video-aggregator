@@ -68,12 +68,13 @@ class PostUpdateThread(Thread):
             q = '''
                     update posts set
                         trending_score =
-                        (sqrt(pending_payout_value) * 1000000) / pow(EXTRACT(EPOCH FROM current_timestamp - created) + 300, 0.15),
+                        (pow(pending_payout_value, 0.4) * 1000000) / pow(EXTRACT(EPOCH FROM current_timestamp - created) + 300, 0.2),
                         hot_score =
                         (sqrt(pending_payout_value - least(9.99, pending_payout_value)) * 1000000) / (EXTRACT(EPOCH FROM current_timestamp - created) + 60)
                         where EXTRACT(EPOCH FROM current_timestamp - created) > 600
                         and EXTRACT(EPOCH FROM current_timestamp - created) < 604800
                     '''
+                # 1 week is 604800 seconds
                 # removed 'and pending_payout_value > 9.99' to prevent flagging not updating some posts
             db.engine.execute(text(q).execution_options(autocommit=True))
         except Exception as e:
@@ -195,7 +196,7 @@ class PostUpdateThread(Thread):
     # query thread to update posts with pending update, and perform them
     # also update trending/hot scores every 5 minutes
     def run(self):
-        last_updated_post_scores = datetime.now()
+        last_updated_post_scores = datetime.now() - timedelta(seconds=240)
         while True:
             time.sleep(0.5)
 
