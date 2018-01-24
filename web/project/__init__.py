@@ -151,34 +151,44 @@ def status():
 
 # PUBLIC PAGES ########################################################
 
+@app.route('/f/api/trending-videos/<limit>', methods=['GET', 'POST'])
 @app.route('/f/api/trending-videos', methods=['GET', 'POST'])
-def trending_videos():
+def trending_videos(limit="30"):
+    limit = int(limit)
     filter_data = {}
     query = db.session.query(Post)
     if request.method == 'POST':
         data = request.data
         filter_data = json.loads(data)
         query = apply_filter_to_query(query, filter_data)
-    query = query.order_by(Post.trending_score.desc()).limit(30)
+    # get more records than needed as post query filters may remove some
+    query = query.order_by(Post.trending_score.desc()).limit(limit*2)
     df = pd.read_sql(query.statement, db.session.bind)
     df = create_video_summary_fields(df, filter_data)
+    df = df.head(limit)
     return df.to_json(orient='records')
 
+@app.route('/f/api/hot-videos/<limit>', methods=['GET', 'POST'])
 @app.route('/f/api/hot-videos', methods=['GET', 'POST'])
-def hot_videos():
+def hot_videos(limit="30"):
+    limit = int(limit)
     filter_data = {}
     query = db.session.query(Post)
     if request.method == 'POST':
         data = request.data
         filter_data = json.loads(data)
         query = apply_filter_to_query(query, filter_data)
-    query = query.order_by(Post.hot_score.desc()).limit(30)
+    # get more records than needed as post query filters may remove some
+    query = query.order_by(Post.hot_score.desc()).limit(limit*2)
     df = pd.read_sql(query.statement, db.session.bind)
     df = create_video_summary_fields(df, filter_data)
+    df = df.head(limit)
     return df.to_json(orient='records')
 
+@app.route('/f/api/new-videos/<limit>', methods=['GET', 'POST'])
 @app.route('/f/api/new-videos', methods=['GET', 'POST'])
-def new_videos():
+def new_videos(limit="30"):
+    limit = int(limit)
     filter_data = {}
     try:
         query = db.session.query(Post)
@@ -186,9 +196,11 @@ def new_videos():
             data = request.data
             filter_data = json.loads(data)
             query = apply_filter_to_query(query, filter_data)
-        query = query.order_by(Post.created.desc()).limit(30)
+        # get more records than needed as post query filters may remove some
+        query = query.order_by(Post.created.desc()).limit(limit*2)
         df = pd.read_sql(query.statement, db.session.bind)
         df = create_video_summary_fields(df, filter_data)
+        df = df.head(limit)
         return df.to_json(orient='records')
     except Exception as e:
         return str(e)

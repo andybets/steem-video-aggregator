@@ -5,6 +5,7 @@ import vueResource from 'vue-resource'
 import HomePage from './HomePage.vue'
 import PlayPage from './PlayPage.vue'
 import SearchResultsPage from './SearchResultsPage.vue'
+import ThumbnailsPage from './ThumbnailsPage.vue'
 import HeaderBar from './HeaderBar.vue'
 import PlayerYoutube from './PlayerYoutube.vue'
 import PlayerDtube from './PlayerDtube.vue'
@@ -232,10 +233,17 @@ const router = new VueRouter({
     base: __dirname,
     routes: [
         { path: '/', component: HomePage },
-//        { path: '/@:author', component: PlayPage },
         { path: '/@:author/:permlink', component: PlayPage },
-//        { path: '/:category/@:author/:permlink', component: PlayPage },
-        { path: '/search/:search_terms', component: SearchResultsPage }
+        { path: '/search/:search_terms', component: SearchResultsPage },
+        { path: '/trending', component: ThumbnailsPage, props: { 
+            page_title: 'Trending Videos', 
+            video_list_url: '/f/api/trending-videos' }},
+        { path: '/hot', component: ThumbnailsPage, props: { 
+            page_title: 'Hot Videos', 
+            video_list_url: '/f/api/hot-videos' }},
+        { path: '/new', component: ThumbnailsPage, props: { 
+            page_title: 'New Videos', 
+            video_list_url: '/f/api/new-videos' }}
     ],
 });
 

@@ -2,7 +2,7 @@
   <div class='homepage'>
 
     <b-container class="video-horizontal-panel">
-      <h4 style="padding-left:10px">Hot Videos <span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span> </h4>
+      <h4 style="padding-left:10px"><router-link :to="{ path: '/hot' }">Hot Videos</router-link> <span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span> </h4>
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
@@ -48,7 +48,7 @@
     <hr>
 
     <b-container class="video-horizontal-panel">
-      <h4 style="padding-left:10px">Trending Videos<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
+      <h4 style="padding-left:10px"><router-link :to="{ path: '/trending' }">Trending Videos</router-link><span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
@@ -93,7 +93,7 @@
     <hr>
 
     <b-container class="video-horizontal-panel">
-      <h4 style="padding-left:10px">New Videos<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
+      <h4 style="padding-left:10px"><router-link :to="{ path: '/new' }">New Videos</router-link><span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
@@ -339,5 +339,10 @@ a {
   }
 }
 
+.action-link {
+  color: #000066;
+  cursor: pointer;
+  font-weight: 800;
+}
 </style>
 
