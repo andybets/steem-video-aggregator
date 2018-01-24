@@ -84,8 +84,16 @@ class PostUpdateThread(Thread):
     # query Steem API node for up to date content, and add to post
     def update_steem_info(self, post):
         try:
-            # todo - trap http error and retry fetch, or return marker to retry later?
-            content = steem.get_content(post.author, post.permlink)
+            # trap http type errors and retry fetch
+            content = {}
+            while not content:
+                try:
+                    content = steem.get_content(post.author, post.permlink)
+                except Exception as e:
+                    log('Problem getting Steem info from API for: @' + post.author + '/' + post.permlink + '!')
+                    log(str(e))
+                    time.sleep(5)
+
             post.created = datetime.strptime(content['created'], '%Y-%m-%dT%H:%M:%S')
             post.category = content['category']
             js = content.get('json_metadata', '[]')
@@ -115,7 +123,7 @@ class PostUpdateThread(Thread):
             log(str(e))
             db.session.delete(post)
             db.session.commit()
-            log('Deleted post!') # todo - decide whether there's a better approach to this
+            log('Assumed Invalid, and Deleted post!') # todo - decide whether there's a better approach to this
 
     # query youtube/dtube/vimeo for up to date content, and add to post
     def update_video_info(self, post):
@@ -125,7 +133,13 @@ class PostUpdateThread(Thread):
                 video_api_key = app.config['YOUTUBE_API_KEY']
                 # url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2Cstatus%2Cplayer&id=' + video_id + '&key=' + video_api_key
                 url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' + video_id + '&key=' + video_api_key
-                js = requests.get(url).json()
+                try:
+                    js = requests.get(url).json()
+                except Exception as e:
+                    log(url)
+                    log('Problem accessing YouTube Video info for: @' + post.author + '/' + post.permlink + '!')
+                    time.sleep(5)
+                    return
                 items = js['items']
                 if len(items) == 1:
                     item = items[0]
@@ -143,7 +157,13 @@ class PostUpdateThread(Thread):
             elif post.video_type == 'dtube':
                 try:
                     url = 'https://steemit.com/dtube/@' + post.author + '/' + post.permlink + '.json'
-                    js = requests.get(url).json()['post']
+                    try:
+                        js = requests.get(url).json()['post']
+                    except Exception as e:
+                        log(url)
+                        log('Problem accessing DTube Video info for: @' + post.author + '/' + post.permlink + '!')
+                        time.sleep(5)
+                        return
                     metadata = js.get('json_metadata', '[]')
                     post.video_thumbnail_image_url = 'https://ipfs.io/ipfs/' + metadata['video']['info']['snaphash']
                     post.video_duration_seconds = metadata['video']['info']['duration']
@@ -156,13 +176,19 @@ class PostUpdateThread(Thread):
                     log('Problem updating updating dtube video info: ' + str(e))
                     db.session.delete(post)
                     db.session.commit()
-                    log('Deleted DTube Video Post: @' + post.author + '/' + post.permlink)
+                    log('Assumed Invalid, and Deleted post! : @' + post.author + '/' + post.permlink)
                     return
 
             elif post.video_type == 'dlive':
                 try:
                     url = 'https://steemit.com/dlive/@' + post.author + '/' + post.permlink + '.json'
-                    js = requests.get(url).json()['post']
+                    try:
+                        js = requests.get(url).json()['post']
+                    except Exception as e:
+                        log(url)
+                        log('Problem accessing DLive Video info for: @' + post.author + '/' + post.permlink + '!')
+                        time.sleep(5)
+                        return
                     metadata = js.get('json_metadata', '[]')
                     post.video_thumbnail_image_url = metadata.get('thumbnail', '')
                     post.video_duration_seconds = -1
@@ -175,7 +201,7 @@ class PostUpdateThread(Thread):
                     log('Problem updating updating dlive video info: ' + str(e))
                     db.session.delete(post)
                     db.session.commit()
-                    log('Deleted DLive Video Post: @' + post.author + '/' + post.permlink)
+                    log('Assumed Invalid, and Deleted post! : @' + post.author + '/' + post.permlink)
                     return
 
             # todo - implement support
@@ -190,7 +216,7 @@ class PostUpdateThread(Thread):
             log(str(e))
             db.session.delete(post)
             db.session.commit()
-            log('Deleted invalid post!!')
+            log('Assumed Invalid, and Deleted post!')
         return post
 
     # query thread to update posts with pending update, and perform them
