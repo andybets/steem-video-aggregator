@@ -57,7 +57,6 @@ from steem import Steem
 steem = Steem(nodes=app.config['STEEM_NODES'])
 
 def create_video_summary_fields(df, filter_data={}):
-
     if filter_data.get('filter_exclude_nsfw', 'false') == 'true':
         df = df[~(df['tags'].apply(lambda x: x.lower().find('nsfw') >= 0))]
 
@@ -115,38 +114,6 @@ def apply_sort_to_query(original_query, filter_data):
     elif filter_data.get('filter_sort_selection', 'all') == 'hot':
         sort_order = Post.hot_score.desc()
     return new_query.order_by(sort_order)
-
-
-# DEBUGGING PAGES #####################################################
-
-@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/raw/@<author>/<permlink>')
-def raw(author, permlink):
-    content = steem.get_content(author, permlink)
-    return str(content)
-
-# shows current replies
-@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/raw-replies/@<author>/<permlink>')
-def raw_replies(author, permlink):
-    replies = steem.get_content_replies(author, permlink)
-    return str(replies)
-
-@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/status')
-def status():
-    html = 'Steem Blockchain Head Block: ' + str(steem.head_block_number) + '<br>'
-    try:
-        bn = db.session.query(Post).order_by(Post.id.desc()).first().block_number
-    except:
-        bn = 0
-    html += 'Database Head Block: ' + str(bn) + '<br>'
-    html += 'Approximate Database Head Delay: ' + str(steem.head_block_number - bn) + '<br>'
-    html += 'Posts: ' + str(db.session.query(Post.id).count()) + '<br>'
-    html += 'Posts Pending Steem Info Update: ' \
-            + str(db.session.query(Post.id).filter(Post.pending_steem_info_update==True).count()) + '<br>'
-    html += 'Posts Pending Video Info Update: ' \
-            + str(db.session.query(Post.id).filter(Post.pending_video_info_update==True).count()) + '<br>'
-    return html
-
-#######################################################################
 
 
 # PUBLIC PAGES ########################################################
@@ -216,9 +183,9 @@ def search(search_terms, limit='50'):
         filter_data = json.loads(data)
     try:
         author_filter = (Post.author == search_terms)
-        search_terms = "'" + search_terms + "'"
-        title_filter = Post.title_ts_vector.match(search_terms, postgresql_regconfig='english')
-        tags_filter = Post.tags_ts_vector.match(search_terms, postgresql_regconfig='english')
+        modified_search_terms = "'" + search_terms + "'"
+        title_filter = Post.title_ts_vector.match(modified_search_terms, postgresql_regconfig='english')
+        tags_filter = Post.tags_ts_vector.match(modified_search_terms, postgresql_regconfig='english')
         query = db.session.query(Post).filter(author_filter | title_filter | tags_filter)
         query = apply_filter_to_query(query, filter_data)
         query = apply_sort_to_query(query, filter_data)
@@ -300,27 +267,55 @@ def votes(author=None, permlink=None):
 
 ########################################################################
 
+# DEBUGGING AND EXPERIMENTAL PAGES (NOT USED IN VUE APP) ###############
 
-# ERROR PAGES ##########################################################
+@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/raw/@<author>/<permlink>')
+def raw(author, permlink):
+    content = steem.get_content(author, permlink)
+    return str(content)
 
-@app.errorhandler(400)
-def page_not_found(e):
-    html = str(e)
-    return render_template('simple.html', content_html=html)
+# shows current replies
+@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/raw-replies/@<author>/<permlink>')
+def raw_replies(author, permlink):
+    replies = steem.get_content_replies(author, permlink)
+    return str(replies)
 
-@app.errorhandler(404)
-def page_not_found(e):
-    html = str(e)
-    return render_template('simple.html', content_html=html)
+@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/status')
+def status():
+    html = 'Steem Blockchain Head Block: ' + str(steem.head_block_number) + '<br>'
+    try:
+        bn = db.session.query(Post).order_by(Post.id.desc()).first().block_number
+    except:
+        bn = 0
+    html += 'Database Head Block: ' + str(bn) + '<br>'
+    html += 'Approximate Database Head Delay Seconds: ' + str((steem.head_block_number - bn) * 3) + '<br>'
+    html += 'Posts in Database: ' + str(db.session.query(Post.id).count()) + '<br>'
+    html += 'Posts Pending Steem Info Update: ' \
+            + str(db.session.query(Post.id).filter(Post.pending_steem_info_update==True).count()) + '<br>'
+    html += 'Posts Pending Video Info Update: ' \
+            + str(db.session.query(Post.id).filter(Post.pending_video_info_update==True).count()) + '<br>'
+    return html
 
-@app.errorhandler(403)
-def page_not_found(e):
-    html = str(e)
-    return render_template('simple.html', content_html=html)
+# to explore how better full text search might be done
+# todo - establish whether existing indexes are used in the query below (suspect not)
+@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/test-search/<search_terms>', methods=['GET', 'POST'])
+def test_search(search_terms):
+    try:
+        sql = text('''
+                    SELECT pid, p_title
+                    FROM (SELECT posts.id as pid,
+                                 posts.title as p_title,
+                                 setweight(to_tsvector('english', posts.title), 'A') ||
+                                 setweight(to_tsvector('english', posts.tags), 'A') ||
+                                 setweight(to_tsvector('simple', posts.author), 'A') as document
+                          FROM posts) as p_search
+                    WHERE p_search.document @@ to_tsquery('english', 'acoustic <-> guitar')
+                    ORDER BY ts_rank(p_search.document, to_tsquery('english', 'acoustic <-> guitar')) DESC;
+                   ''')
+        df = pd.read_sql(sql, db.session.connection())
+        return df.to_html()
 
-@app.errorhandler(410)
-def page_not_found(e):
-    html = str(e)
-    return render_template('simple.html', content_html=html)
+    except Exception as e:
+        return str(e)
 
-########################################################################
+#######################################################################
