@@ -15,7 +15,7 @@ import markdown
 import bleach
 import pandas as pd
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, not_
 from sqlalchemy import text
 
 
@@ -57,9 +57,6 @@ from steem import Steem
 steem = Steem(nodes=app.config['STEEM_NODES'])
 
 def create_video_summary_fields(df, filter_data={}):
-    if filter_data.get('filter_exclude_nsfw', 'false') == 'true':
-        df = df[~(df['tags'].apply(lambda x: x.lower().find('nsfw') >= 0))]
-
     # temporary fix dlive thumbnails to https to prevent SSL warning
 #    df = df[~(df['video_thumbnail_image_url']==None)]
     df['video_thumbnail_image_url'] = df['video_thumbnail_image_url'].apply(lambda x: x.replace('http://', 'https://') if x != None else '')
@@ -100,6 +97,9 @@ def apply_filter_to_query(original_query, filter_data):
         new_query = new_query.filter(Post.video_duration_seconds > 1200)
     if filter_data.get('filter_exclude_old_video', 'false') == 'true':
         new_query = new_query.filter(Post.video_post_publish_delay_seconds < (7*24*3600))
+    if filter_data.get('filter_exclude_nsfw', 'false') == 'true':
+        new_query = new_query.filter(not_(Post.is_nsfw))
+
     return new_query
 
 def apply_sort_to_query(original_query, filter_data):
@@ -129,7 +129,7 @@ def trending_videos(limit="30"):
         filter_data = json.loads(data)
         query = apply_filter_to_query(query, filter_data)
     # get more records than needed as post query filters may remove some
-    query = query.order_by(Post.trending_score.desc()).limit(limit*2)
+    query = query.order_by(Post.trending_score.desc()).limit(int(limit*1.2))
     df = pd.read_sql(query.statement, db.session.bind)
     df = create_video_summary_fields(df, filter_data)
     df = df.head(limit)
@@ -146,7 +146,7 @@ def hot_videos(limit="30"):
         filter_data = json.loads(data)
         query = apply_filter_to_query(query, filter_data)
     # get more records than needed as post query filters may remove some
-    query = query.order_by(Post.hot_score.desc()).limit(limit*2)
+    query = query.order_by(Post.hot_score.desc()).limit(int(limit*1.2))
     df = pd.read_sql(query.statement, db.session.bind)
     df = create_video_summary_fields(df, filter_data)
     df = df.head(limit)
@@ -164,7 +164,7 @@ def new_videos(limit="30"):
             filter_data = json.loads(data)
             query = apply_filter_to_query(query, filter_data)
         # get more records than needed as post query filters may remove some
-        query = query.order_by(Post.created.desc()).limit(limit*2)
+        query = query.order_by(Post.created.desc()).limit(int(limit*1.2))
         df = pd.read_sql(query.statement, db.session.bind)
         df = create_video_summary_fields(df, filter_data)
         df = df.head(limit)
@@ -189,7 +189,7 @@ def search(search_terms, limit='50'):
         query = db.session.query(Post).filter(author_filter | title_filter | tags_filter)
         query = apply_filter_to_query(query, filter_data)
         query = apply_sort_to_query(query, filter_data)
-        query = query.limit(limit*2) # get more records than needed as post query filters may remove some
+        query = query.limit(int(limit*1.2)) # get more records than needed as post query filters may remove some
         df = pd.read_sql(query.statement, db.session.bind)
         df = create_video_summary_fields(df, filter_data)
         df = df.head(limit)
