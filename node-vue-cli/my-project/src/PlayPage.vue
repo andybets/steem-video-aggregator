@@ -1,9 +1,10 @@
 <template>
   <div class='playpage'>
-    <b-container fluid class="overallpanel">
+    <b-container class="overallpanel">
       <b-row no-gutters>
-        <b-col cols="12" xl="10">
-          <b-container class="leftpanel">
+        <b-col cols="12" xl="9" >
+
+          <b-container fluid class="leftpanel px-lg-2 pl-xl-5">
             <b-row>
               <b-col>
                 <b-container fluid class="videopanel">
@@ -68,7 +69,7 @@
                 <b-container fluid class="commentspanel">
                   <b-row>
                     <b-col>
-                      <b-container class="pt-2">
+                      <b-container class="pt-2 mx-0">
                         <b-row no-gutters>
                           <b-col cols="auto">
                             <h5>Comments</h5>
@@ -81,7 +82,7 @@
                   <!-- load 1st level comments with main content, but other levels as requested //-->
                   <b-row v-for="comment in info.comments" :key="comment.permlink">
                     <b-col>
-                      <b-container class="pt-3 pb-2">
+                      <b-container class="pt-3 pb-2 mx-0">
                         <b-row no-gutters>
                           <b-col cols="auto">
                             <b-img :src="'https://img.busy.org/@' + comment.author + '?width=40&height=40'" rounded="circle" blank-color="#777"/>
@@ -117,21 +118,24 @@
               </b-col>
             </b-row>
           </b-container>    
+
         </b-col>
         <b-col>
-          <b-container class="rightpanel">
+
+          <b-container class="rightpanel pr-lg-2 pr-xl-5">
             <b-row>
               <b-col>
-                <b-container class="videolistpanel">
+                <b-container class="rightpanel-placeholder">
                   <b-row>
                     <b-col>
-                      Related Videos
+                      Right Panel Placeholder
                     </b-col>
                   </b-row>
                 </b-container>    
               </b-col>
             </b-row>
           </b-container>    
+
         </b-col>
       </b-row>
     </b-container>    
@@ -201,7 +205,7 @@ a {
   padding-right:15px;
 }
 
-.videolistpanel {
+.rightpanel-placeholder {
   border: 1px solid #EAEAEA;
   margin-left:10px;
   margin-right:10px;
