@@ -22,7 +22,9 @@
       return { 
         player: null,
         done: false,
-        overlay: false
+        overlay: false,
+        playback_rates: [0.25, 0.5, 1, 1.5, 2],
+        current_playback_rate_index: 2
       }
     },
     methods: {
@@ -57,8 +59,37 @@
         cmp.resizeVideo(); // todo - check this always fires
         window.addEventListener('resize', cmp.resizeVideo);
       }, 10);
+
+      // add basic keyboard shortcuts
+      var cmp = this;
+      window.key_listener = function(event) {
+        if (event.keyCode == 32) { // spacebar play/pause
+          if (!cmp.player.paused) {
+            event.preventDefault();
+            cmp.player.pause();
+          } else {
+            event.preventDefault();
+            cmp.player.play();
+          }
+        }
+        if (event.keyCode == 190  && event.shiftKey) { // shift + > to increase playback rate
+          if (cmp.current_playback_rate_index < cmp.playback_rates.length - 1) {
+            cmp.current_playback_rate_index++;
+            cmp.player.playbackRate = cmp.playback_rates[cmp.current_playback_rate_index];
+          }
+        }
+        if (event.keyCode == 188  && event.shiftKey) { // shift + < to decrease playback rate
+          if (cmp.current_playback_rate_index > 0) {
+            cmp.current_playback_rate_index--;
+            cmp.player.playbackRate = cmp.playback_rates[cmp.current_playback_rate_index];
+          }
+        }
+      }
+      window.addEventListener('keydown', window.key_listener);
+
     },
     beforeDestroy: function() {
+      window.removeEventListener('keydown', window.key_listener);
 //      this.player.destroy();
     }
   }
