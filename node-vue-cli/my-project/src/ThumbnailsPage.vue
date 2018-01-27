@@ -70,7 +70,7 @@
 
 
         if (video_type=='dlive' && video_id == 'live') {
-          window.location.href = 'https://www.dlive.io/#/video/' + v.author + '/' + v.permlink;
+          window.location.href = 'https://www.dlive.io/#/video/' + author + '/' + permlink;
         }
         this.$router.push('/@' + author + '/' + permlink);
       },
