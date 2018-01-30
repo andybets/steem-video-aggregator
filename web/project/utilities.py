@@ -10,7 +10,7 @@ import markdown
 import bleach
 
 # compile regex for checking for youtube videos
-youtube_video_regex = '\n((http(s)?://youtu.be/)|(http(s)?://www.youtube.com/embed/)|(http(s)?://www.youtube.com/)|(http(s)?://m.youtube.com/))(watch\?v=)?(?P<videoid>(\w|\_|\-)*)'
+youtube_video_regex = '(\n)|(src\s?=\s?.{1})((http(s)?://youtu.be/)|(http(s)?://www.youtube.com/embed/)|(http(s)?://www.youtube.com/)|(http(s)?://m.youtube.com/))(watch\?v=)?(?P<videoid>(\w|\_|\-)*)'
 youtube_video_regex = re.compile(youtube_video_regex)
 
 def log(s):
