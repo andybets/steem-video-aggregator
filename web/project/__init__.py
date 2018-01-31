@@ -47,7 +47,7 @@ configure_uploads(app, images)
 
 from project import db
 from project.models import *
-from project.utilities import get_age_string, get_duration_string, get_payout_string
+from project.utilities import get_age_string, get_duration_string, get_payout_string, markdown_to_safe_html, resized_image_url_from_url
 
 import json
 from contextlib import suppress
@@ -69,6 +69,7 @@ def create_video_summary_fields(df, filter_data={}):
     df['video_post_delay_days'] = df['video_post_publish_delay_seconds'] // (3600 * 24)
 
     df['payout_string'] = (df['pending_payout_value'] + df['total_payout_value']).apply(lambda x: get_payout_string(x))
+    df['title'] = df['title'].apply(lambda x: markdown_to_safe_html(x))
     df['title_truncated'] = df['title'].apply(lambda x: x[:80])
     return df[['author', 'permlink', 'category', 'title', 'title_truncated', 'created', 'age_string', 'payout_string',
              'duration_string', 'video_type', 'video_id', 'video_thumbnail_image_url', 'video_post_delay_days',
@@ -209,7 +210,7 @@ def video(author=None, permlink=None):
             'age_string': get_age_string(post.created),
             'created': post.created,
             'tags': post.tags.split(' '),
-            'description': post.description, # sanitise?
+            'description': markdown_to_safe_html(post.description),
             'payout_string': get_payout_string(post.pending_payout_value + post.total_payout_value),
             'upvotes': 0,
             'downvotes': 0,
@@ -228,7 +229,7 @@ def video(author=None, permlink=None):
                     'age_string': get_age_string(datetime.strptime(reply['created'], '%Y-%m-%dT%H:%M:%S')),
                     'created': datetime.strptime(reply['created'], '%Y-%m-%dT%H:%M:%S'),
                     'payout_string': get_payout_string(float(reply['pending_payout_value'].split(' ')[0]) + float(reply['total_payout_value'].split(' ')[0])),
-                    'body': reply['body'], # todo - sanitise?
+                    'body': markdown_to_safe_html(reply['body']),
                     'reply_count': int(reply['children']),
                     'upvotes': 0,
                     'downvotes': 0
@@ -251,7 +252,7 @@ def replies(author=None, permlink=None):
             'age_string': get_age_string(datetime.strptime(reply['created'], '%Y-%m-%dT%H:%M:%S')),
             'created': datetime.strptime(reply['created'], '%Y-%m-%dT%H:%M:%S'),
             'payout_string': get_payout_string(float(reply['pending_payout_value'].split(' ')[0]) + float(reply['total_payout_value'].split(' ')[0])),
-            'body': reply['body'], # todo - sanitise?
+            'body': markdown_to_safe_html(reply['body']),
             'reply_count': int(reply['children']),
             'upvotes': 0,
             'downvotes': 0

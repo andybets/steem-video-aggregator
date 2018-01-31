@@ -51,7 +51,8 @@ def get_duration_string(seconds):
     except Exception as e:
         return '' # duration not available
 
-def markdown_to_plain_html(s):
+# todo - improve efficiency of this
+def markdown_to_safe_html(s):
     html = s
     try:
         html = html.replace('\n', '<br>')
@@ -67,7 +68,7 @@ def markdown_to_plain_html(s):
     except Exception as e:
         log('Problem adding links: ' + str(e))
 
-    # remove unwanted blank lines, todo - use regex instead
+    # remove unwanted blank lines
     for a in range(3):
         html = html.replace('<br><br><br>', '<br><br>')
     return html

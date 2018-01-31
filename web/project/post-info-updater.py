@@ -45,7 +45,7 @@ sys.path.append('/home/flask/app/web/')
 
 from project import db
 from project.models import Post
-from project.utilities import log,  seconds_from_youtube_duration, get_valid_video, markdown_to_plain_html
+from project.utilities import log,  seconds_from_youtube_duration, get_valid_video, markdown_to_safe_html
 
 import json
 import requests
@@ -113,7 +113,7 @@ class PostUpdateThread(Thread):
             # this check is applied so dtube posts, edited in steemit are still retained
             if new_type and new_video_id and new_category:
                 post.video_type, post.video_id, post.category = new_type, new_video_id, new_category
-            post.description = markdown_to_plain_html(content['body'])
+            post.description = markdown_to_safe_html(content['body'])
             post.pending_steem_info_update = False
             post.steem_info_update_requested = None
             db.session.commit()
