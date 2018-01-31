@@ -145,3 +145,10 @@ def seconds_from_youtube_duration(durationstring):
     try: seconds = int(match.group('seconds'))
     except: seconds = 0
     return hours * 3600 + minutes * 60 + seconds
+
+# experimentally get urls for image resizing proxy
+# todo - check scalability of this kind of approach, investigate other service providers (eg. tiny.pictures)
+def resized_image_url_from_url(url, width=280, height=157):
+    url = url.replace('http://', '').replace('https://', '')
+    newurl = 'https://images.weserv.nl/?url=' + url + '&w=' + str(width) + '&h=' + str(height) + '&t=letterbox&bg=black'
+    return newurl

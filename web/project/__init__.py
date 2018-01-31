@@ -71,6 +71,10 @@ def create_video_summary_fields(df, filter_data={}):
     df['payout_string'] = (df['pending_payout_value'] + df['total_payout_value']).apply(lambda x: get_payout_string(x))
     df['title'] = df['title'].apply(lambda x: markdown_to_safe_html(x))
     df['title_truncated'] = df['title'].apply(lambda x: x[:80])
+
+    # experimental resizing through free image proxy/cache
+    df['video_thumbnail_image_url'] = df['video_thumbnail_image_url'].apply(lambda x: resized_image_url_from_url(x))
+
     return df[['author', 'permlink', 'category', 'title', 'title_truncated', 'created', 'age_string', 'payout_string',
              'duration_string', 'video_type', 'video_id', 'video_thumbnail_image_url', 'video_post_delay_days',
              'trending_score', 'hot_score']]
