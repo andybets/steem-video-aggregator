@@ -8,12 +8,13 @@
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
         scrollPerPage>
 
-        <slide v-for="v in hot_videos" :key="v.author + v.permlink">
+        <!-- todo - improve lazy loading, currently in slide //-->
+        <slide v-for="v in hot_videos" :key="v.author + v.permlink" @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
             <div>
                 <div style="position:relative;padding:5px;margin-right:0px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/>
+                        <b-img-lazy class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/>
                     </div>
                 </div>
                 <div class="video-info-panel">
@@ -53,12 +54,14 @@
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
         scrollPerPage>
-        <slide v-for="v in trending_videos" :key="v.author + v.permlink">
+
+        <!-- todo - improve lazy loading, currently in slide //-->
+        <slide v-for="v in trending_videos" :key="v.author + v.permlink" @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
             <div>
                 <div style="position:relative;padding:5px;margin-right:0px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img  class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/> 
+                        <b-img-lazy class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/> 
                     </div>
                 </div>
                 <div class="video-info-panel">
@@ -98,12 +101,14 @@
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
         scrollPerPage>
-        <slide v-for="v in new_videos" :key="v.author + v.permlink">
+
+        <!-- todo - improve lazy loading, currently in slide //-->
+        <slide v-for="v in new_videos" :key="v.author + v.permlink" @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
             <div>
                 <div style="position:relative;padding:5px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img  class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/>
+                        <b-img-lazy class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/>
                     </div>
                 </div>
                 <div class="video-info-panel">
@@ -209,6 +214,14 @@
       },
       preventTouchmove: function(e) { // to prevent iOS page moving on carousel swipe todo - remove function when known not needed
         e.preventDefault();        
+      },
+      // this triggers image display check, which carousel component should ideally do
+      // todo - improve the lazy loading approach and remove this hack
+      loadNewlyDisplayedImages: function() {
+        for (var i=0; i<4; i++) {
+          window.setTimeout(function() {window.scroll(window.scrollX, window.scrollY+1)}, 200*i);
+          window.setTimeout(function() {window.scroll(window.scrollX, window.scrollY-1)}, 200*i);
+        }
       }
     },
     data () {
