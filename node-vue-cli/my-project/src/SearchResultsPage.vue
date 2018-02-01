@@ -11,7 +11,7 @@
                 <div style="position:relative;padding:5px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img-lazy @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url" class="thumbnail-image"/> 
+                        <b-img-lazy @contextmenu.native.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url" class="thumbnail-image"/> 
                     </div>
                 </div>
                 <div class="video-info-panel">
@@ -155,7 +155,7 @@
 
 </script>
 
-<style>
+<style scoped>
 
 ul {
   list-style-type: none;

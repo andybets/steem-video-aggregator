@@ -5,12 +5,12 @@
       <h4 v-if="videos.length>0" style="padding-left:10px">{{ page_title }}<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <b-row>
 
-        <b-col sm="12" md="6" lg="4" xl="3" v-for="v in videos" :key="v.author + v.permlink">
+        <b-col class="px-0" sm="6" md="4" lg="3" xl="2" v-for="v in videos" :key="v.author + v.permlink">
             <div style="padding-bottom:15px">
                 <div style="position:relative;padding:5px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img-lazy @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url" class="thumbnail-image"/> 
+                        <b-img-lazy @contextmenu.native.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url" class="thumbnail-image"/> 
                     </div>
                 </div>
                 <div class="video-info-panel">
@@ -154,7 +154,7 @@
 
 </script>
 
-<style>
+<style scoped>
 
 ul {
   list-style-type: none;
@@ -239,7 +239,10 @@ a {
 }
 
 
-/* make space for video arrows */
+.video-horizontal-panel {
+  padding-left:25px;
+  padding-right:25px;
+}
 @media (min-width: 768px) {
   .video-horizontal-panel {
     padding-left:55px;

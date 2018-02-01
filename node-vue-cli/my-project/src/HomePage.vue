@@ -6,10 +6,10 @@
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
-        scrollPerPage>
+        scrollPerPage @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
 
         <!-- todo - improve lazy loading, currently in slide //-->
-        <slide v-for="v in hot_videos" :key="v.author + v.permlink" @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
+        <slide v-for="v in hot_videos" :key="v.author + v.permlink">
             <div>
                 <div style="position:relative;padding:5px;margin-right:0px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
@@ -53,10 +53,10 @@
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
-        scrollPerPage>
+        scrollPerPage @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
 
         <!-- todo - improve lazy loading, currently in slide //-->
-        <slide v-for="v in trending_videos" :key="v.author + v.permlink" @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
+        <slide v-for="v in trending_videos" :key="v.author + v.permlink">
             <div>
                 <div style="position:relative;padding:5px;margin-right:0px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
@@ -100,10 +100,10 @@
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
-        scrollPerPage>
+        scrollPerPage @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
 
         <!-- todo - improve lazy loading, currently in slide //-->
-        <slide v-for="v in new_videos" :key="v.author + v.permlink" @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
+        <slide v-for="v in new_videos" :key="v.author + v.permlink">
             <div>
                 <div style="position:relative;padding:5px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
@@ -252,6 +252,20 @@
 </script>
 
 <style>
+.navbar-braond {
+  margin-right: 0px;
+}
+
+/* prevent carousel pagination showing - shouldn't be needed */
+.VueCarousel-pagination {
+  display:none;
+}
+.VueCarousel-navigation--disabled{
+  opacity: 0.1!important;
+}
+</style>
+
+<style scoped>
 
 ul {
   list-style-type: none;
@@ -307,19 +321,6 @@ a {
   right:10px;
   background-color:rgb(0,0,0);
   color:white;
-}
-
-.navbar-braond {
-  margin-right: 0px;
-}
-
-/* prevent carousel pagination showing - shouldn't be needed */
-.VueCarousel-pagination {
-  display:none;
-}
-
-.VueCarousel-navigation--disabled{
-  opacity: 0.1!important;
 }
 
 .video-horizontal-panel {

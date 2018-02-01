@@ -213,6 +213,15 @@ h2 {
   margin:0px;
 }
 
+h4 {
+  font-size: 1.1rem!important;
+}
+@media (min-width: 576px) {
+  h4 {
+    font-size: 1.4rem!important;
+  }
+}
+
 ul {
   list-style-type: none;
   padding: 0;

@@ -1,6 +1,6 @@
 <template>
   <div class='playpage'>
-    <b-container class="overallpanel">
+    <b-container class="overallpanel px-xl-5">
       <b-row no-gutters>
         <b-col cols="12" xl="9" >
 
@@ -170,7 +170,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 
 h1, h2 {
   font-weight: normal;
@@ -246,9 +246,12 @@ a {
   background-color: white;
 }
 
-.action-link {
-  color: #000066;
-  cursor: pointer;
-  font-weight: 800;
-}
+</style>
+
+<style>
+  .action-link {
+    color: #000066;
+    cursor: pointer;
+    font-weight: 800;
+  }
 </style>

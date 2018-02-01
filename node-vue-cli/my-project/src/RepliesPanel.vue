@@ -62,7 +62,7 @@
 
 </script>
 
-<style>
+<style scoped>
   .repliespanel {
     padding: 0em;
     padding-top: 0.7em;
