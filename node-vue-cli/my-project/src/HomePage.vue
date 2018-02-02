@@ -6,7 +6,7 @@
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
-        scrollPerPage @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
+        scrollPerPage @touchend.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
 
         <!-- todo - improve lazy loading, currently in slide //-->
         <slide v-for="v in hot_videos" :key="v.author + v.permlink">
@@ -14,7 +14,7 @@
                 <div style="position:relative;padding:5px;margin-right:0px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img-lazy class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/>
+                        <b-img-lazy offset="1000" class="thumbnail-image" @contextmenu.native.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/>
                     </div>
                 </div>
                 <div class="video-info-panel">
@@ -53,7 +53,7 @@
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
-        scrollPerPage @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
+        scrollPerPage @touchend.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
 
         <!-- todo - improve lazy loading, currently in slide //-->
         <slide v-for="v in trending_videos" :key="v.author + v.permlink">
@@ -61,7 +61,7 @@
                 <div style="position:relative;padding:5px;margin-right:0px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img-lazy class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/> 
+                        <b-img-lazy offset="1000" class="thumbnail-image" @contextmenu.native.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/> 
                     </div>
                 </div>
                 <div class="video-info-panel">
@@ -100,7 +100,7 @@
       <carousel :minSwipeDistance="100" :perPage="1" :perPageCustom="[[601, 2], [801, 3], [1101, 4], [1351, 5], [1600, 6]]" navigationEnabled 
         navigationNextLabel="<img src='/dist/images/right-arrow.png'/>"
         navigationPrevLabel="<img src='/dist/images/left-arrow.png'/>"
-        scrollPerPage @touchmove.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
+        scrollPerPage @touchend.native="loadNewlyDisplayedImages" @mouseup.native="loadNewlyDisplayedImages">
 
         <!-- todo - improve lazy loading, currently in slide //-->
         <slide v-for="v in new_videos" :key="v.author + v.permlink">
@@ -108,7 +108,7 @@
                 <div style="position:relative;padding:5px">
                     <span class="duration-label">&nbsp;{{ v.duration_string }}&nbsp;</span>
                     <div style="cursor:pointer;z-index:998;background-color:rgb(0,0,0);">
-                        <b-img-lazy class="thumbnail-image" @contextmenu.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/>
+                        <b-img-lazy offset="1000" class="thumbnail-image" @contextmenu.native.prevent="playVideo(v.author, v.permlink, v.video_type, v.video_id, true)" v-on:click.native="playVideo(v.author, v.permlink, v.video_type, v.video_id, false)" center fluid :src="v.video_thumbnail_image_url"/>
                     </div>
                 </div>
                 <div class="video-info-panel">
