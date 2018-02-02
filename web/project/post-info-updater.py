@@ -62,7 +62,7 @@ class PostUpdateThread(Thread):
         self.app = app
         self.db = db
 
-    # todo - update scores of only active posts
+    # update scores of posts created within last week, set older post scores to 0
     def updatePostScores(self):
         try:
             q = '''
@@ -74,9 +74,15 @@ class PostUpdateThread(Thread):
                         where EXTRACT(EPOCH FROM current_timestamp - created) > 600
                         and EXTRACT(EPOCH FROM current_timestamp - created) < 604800
                     '''
-                # 1 week is 604800 seconds
-                # removed 'and pending_payout_value > 9.99' to prevent flagging not updating some posts
             db.engine.execute(text(q).execution_options(autocommit=True))
+            q = '''
+                    update posts set
+                        trending_score = 0, hot_score = 0
+                        where EXTRACT(EPOCH FROM current_timestamp - created) >= 604800
+                        and trending_score > 0
+                    '''
+            db.engine.execute(text(q).execution_options(autocommit=True))
+
         except Exception as e:
             log('Failed to update scores...')
             log(str(e))
