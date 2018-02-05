@@ -10,7 +10,7 @@ import markdown
 import bleach
 
 # compile regex for checking for youtube videos
-youtube_video_regex = '(\n)|(src\s?=\s?.{1})((http(s)?://youtu.be/)|(http(s)?://www.youtube.com/embed/)|(http(s)?://www.youtube.com/)|(http(s)?://m.youtube.com/))(watch\?v=)?(?P<videoid>(\w|\_|\-)*)'
+youtube_video_regex = '((\n.{0,3})|(src\s?=\s?.{1}))((http(s)?://youtu.be/)|(http(s)?://www.youtube.com/embed/)|(http(s)?://www.youtube.com/)|(http(s)?://m.youtube.com/))(watch\?v=)?(?P<videoid>(\w|\_|\-)+)'
 youtube_video_regex = re.compile(youtube_video_regex)
 
 def log(s):
@@ -129,6 +129,7 @@ def get_valid_video(comment): # returns
             media_id = matches[0]['videoid']
         if (media_id != 'channel') and (media_id != 'edit') and (media_id != 'watch') \
             and (media_id != 'c') and (media_id != 'user') and (media_id != 'playlist'): # exclude invalid video ids
+            log('YouTube Video: ' + media_id) # for debugging regex
             return ('youtube', media_id, category)
     except Exception as e:
         pass
