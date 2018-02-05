@@ -52,6 +52,14 @@ class Post(db.Model):
     video_post_publish_delay_seconds = db.Column(db.Integer, nullable=True)
     description = db.Column(db.String, nullable=True)
 
+    # experimental fields for basic collarorative filter and votes sparkline
+    voters_list = db.Column(db.String, nullable=True)
+    voters_list_ts_vector = create_tsvector(
+        cast(func.coalesce(func.lower(voters_list), ''), postgresql.TEXT)
+    )
+    fts_index_voters_list = db.Index('idx_post_index_voters_fts', voters_list_ts_vector, postgresql_using='gin')
+    votes_sparkline_data = db.Column(db.JSON, nullable=True)
+
     pending_steem_info_update = db.Column(db.Boolean, nullable=False, default=True)
     pending_video_info_update = db.Column(db.Boolean, nullable=False, default=True)
     steem_info_update_requested = db.Column(db.DateTime, nullable=True, default=datetime.now())
