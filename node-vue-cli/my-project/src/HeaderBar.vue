@@ -7,19 +7,32 @@
                 <b-row>
                   <b-col style="padding-right:0px">
                     <a :class="{iconactive: preferences_form_open}" href="#" v-on:click="openPreferences()">
-                      <span v-if="$globals.preferences_not_default" style="color:red!important"><icon name="cogs" scale="1.5" style="vertical-align:middle"></icon></span>
+                      <span v-if="$globals.preferences_not_default" style="color:red!important"><icon name="cogs" scale="1.7" style="vertical-align:middle"></icon></span>
                       <span v-else><icon name="cogs" scale="1.5" style="vertical-align:middle"></icon></span>
                       </a>
                     &nbsp;
                     <a :class="{iconactive: filter_form_open}" href="#" v-on:click="openFilter()">
-                        <span v-if="$globals.filter_not_default" style="color:red!important"><icon name="filter" scale="1.5" style="vertical-align:middle"></icon></span>
+                        <span v-if="$globals.filter_not_default" style="color:red!important"><icon name="filter" scale="1.7" style="vertical-align:middle"></icon></span>
                         <span v-else><icon name="filter" scale="1.5" style="vertical-align:middle"></icon></span>
                     </a>
                     &nbsp;
-                    <a :class="{iconactive: search_form_open}"href="#" v-on:click="openSearch()"><icon name="search" scale="1.5" style="vertical-align:middle"></icon></a>
+                    <a :class="{iconactive: search_form_open}"href="#" v-on:click="openSearch()"><icon name="search" scale="1.7" style="vertical-align:middle"></icon></a>
                     &nbsp;
                     <b-button v-if="!$globals.loggedIn" v-on:click="$globals.startLogin" variant="primary" size="sm">Login</b-button>
-                    <b-img v-if="$globals.userImageURL" :src="$globals.userImageURL" rounded="circle" height="35" blank-color="#777" class="mr-1" />
+                    <b-img v-else id="popoverLogout-sync" :src="'https://img.busy.org/@' + $globals.username + '?width=32&height=32'" rounded="circle" blank-color="#777"/>
+                    <b-popover :show.sync="show_logout_popover" target="popoverLogout-sync">
+                      <div style="width:75px;height:1px"></div>
+                      <b-container v-show="show_logout_popover" class="px-0 mx-0" v-click-outside="closeLogoutPopover">
+                        <b-row no-gutters>
+                          <b-col cols="12">
+                            <b-button style="cursor:pointer;" :variant="'link'" :size="'sm'" v-text="'Log Out'" @click="$globals.logout"></b-button>
+                          </b-col>
+                        </b-row>
+                      </b-container>
+                    </b-popover>
+
+
+<!--                    <b-img v-if="$globals.userImageURL" :src="$globals.userImageURL" rounded="circle" width="35" height="35" blank-color="#777" class="mr-1" /> //-->
                   </b-col>
                 </b-row>
               </b-container>  
@@ -130,6 +143,8 @@ export default {
   name: 'headerbar',
   data () {
     return {
+      show_logout_popover: false,
+
       search_form_open: false,
       filter_form_open: false,
       preferences_form_open: false,
@@ -189,6 +204,9 @@ export default {
       this.preferences_form_open = !this.preferences_form_open;
       this.filter_form_open = false;
       this.search_form_open = false;
+    },
+    closeLogoutPopover: function() {
+      this.show_logout_popover = false;
     }
   },
   created() {

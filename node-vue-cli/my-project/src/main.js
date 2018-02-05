@@ -18,11 +18,16 @@ import "bootstrap-vue/dist/bootstrap-vue.css"
 
 import VueCarousel from 'vue-carousel';
 import InfiniteLoading from 'vue-infinite-loading';
+import vueSlider from 'vue-slider-component';
+//import vueSlider from 'vue-slider-component/src/vue2-slider.vue'
 
 Vue.use(BootstrapVue);
 Vue.use(vueResource);
 Vue.use(VueRouter);
 Vue.use(VueCarousel);
+//Vue.use(vueSlider);
+
+Vue.component('vue-slider', vueSlider);
 
 var Icon = require('vue-awesome');
 Vue.component('icon', Icon);
@@ -67,6 +72,9 @@ const globals = new Vue({
             cookiesAccepted: true,
             Icon: require('vue-awesome'),
 
+            // todo - save to, and load this from local storage
+            default_vote_percent: 50,
+
             search_terms: '',
             filter_age_selection: 'all',
             filter_type_selection: 'all',
@@ -97,11 +105,21 @@ const globals = new Vue({
         // load filter preferences from local storage
         this.loadFilterValues();
 
+        steem.api.setOptions({ url: 'https://api.steemit.com' });
+
+        // set appropriate SteemConnect callbackURL for local testing of production
+        var callbackURL = '';
+        if (window.location.hostname == 'localhost') {
+            callbackURL = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/'
+        } else {
+            callbackURL = window.location.protocol + '//' + window.location.hostname + '/'
+        }
+
         sc2.init({
           baseURL: 'https://v2.steemconnect.com',
           app: 'multitube.app',
-          callbackURL: 'http://localhost',
-          scope: ['vote', 'comment']
+          callbackURL: callbackURL,
+          scope: ['vote', 'comment', 'comment_delete', 'comment_options', 'custom_json']
         });
 
         if (localStorage.getItem("cookiesAccepted") === null) {
@@ -120,7 +138,6 @@ const globals = new Vue({
       },
     methods: {
         startLogin: function() {
-            return // todo - remove to start integrating steemconnect
             window.location.href = sc2.getLoginURL();
         },
         completeLogin: function(access_token) { // from this.$route.query.access_token
@@ -139,9 +156,7 @@ const globals = new Vue({
                     localStorage.setItem("token", access_token);
                     localStorage.setItem("userImageURL", 'access_token');
                     t.loggedIn = true;
-                    // todo remove long return url querystring after steemconnect redirect
-//                    router.replace('/');
-//                    router.replace(getPathFromUrl(window.location.href));
+                    router.replace(window.location.pathname);
 //                    console.log(user);
 //                    console.log(metadata);
                 } else {
@@ -151,8 +166,23 @@ const globals = new Vue({
                 }
               });
         },
-        vote: function(author, permlink, weight, success_callback, error_callback) {
-            sc2.vote(this.username, author, permlink, weight, function (err, res) {
+        logout: function() {
+            this.loggedIn = false;
+            this.username = null;
+            this.token = null;
+            this.userImageURL = null;
+            localStorage.removeItem("username");
+            localStorage.removeItem("token");
+            localStorage.removeItem("userImageURL");
+            window.location.reload();
+        },
+        vote: function(author, permlink, percent, success_callback, error_callback) {
+            if (!this.loggedIn) {
+                window.alert('Please login to vote.')
+                error_callback();
+                return;
+            }
+            sc2.vote(this.username, author, permlink, percent, function (err, res) {
                 console.log(err, res);
                 if (!err) {
                     success_callback();
@@ -171,6 +201,43 @@ const globals = new Vue({
                 }
             });            
         },
+
+        getVotesInfo: function(authur, permlink, success_callback, error_callback) {
+            var cmp = this;
+            steem.api.getContent(authur, permlink, function(err, result) {
+                if (!err) {
+                    var total_payout = parseFloat(result.pending_payout_value) + parseFloat(result.total_payout_value);
+                    var votes = result.active_votes;
+                    votes = votes.sort(function(a, b) { return Math.abs(parseInt(b.rshares)) - Math.abs(parseInt(a.rshares)) })
+                    var total_rshares = 0
+                    var up_voted = false;
+                    var down_voted = false;
+                    for (var i=0; i<votes.length; i++) {
+                        if (votes[i].voter == cmp.username && votes[i].percent > 0 ) { up_voted = true; }
+                        if (votes[i].voter == cmp.username && votes[i].percent < 0 ) { down_voted = true; }
+                        total_rshares = total_rshares + parseInt(votes[i].rshares);
+                    }
+                    var vote_contributions = votes.map(function(x) {
+                        var c =  total_payout * (parseInt(x.rshares) / total_rshares);
+                        if (c > 0) {
+                            return { voter: x.voter, contribution: '<span style="color:green">' + c.toFixed(3) + '</span>' }
+                        } else if (c < 0) {
+                            return { voter: x.voter, contribution: '<span style="color:red"> ' + c.toFixed(3) + '</span>' }
+                        }
+                    });
+                    if (vote_contributions.length > 30) {
+                        vote_contributions = vote_contributions.slice(0, 30);
+                        vote_contributions.push({voter: '(and others)', contribution: ''})
+                    }
+                    // todo - create sparkline data
+                    success_callback(total_payout, up_voted, down_voted, vote_contributions);
+                } else {
+                    console.log(err);
+//                    error_callback(err);
+                }
+            });
+        },
+
         saveFilterValues: function() {
             // update state of filters for visual indications
             if ((this.filter_age_selection != 'all') || (this.filter_type_selection != 'all') 
@@ -234,7 +301,7 @@ const router = new VueRouter({
     base: __dirname,
     routes: [
         { path: '/', component: HomePage },
-        { path: '/@:author/:permlink', component: PlayPage },
+        { path: '/@:author/:permlink', component: PlayPage, props: true},
 
         // results pages
         // todo - allow grid or list views depending on user preferences
@@ -269,7 +336,7 @@ new Vue({
   },
   template: `
         <div id="app">
-            <b-alert variant="warning" v-if="!$globals.cookiesAccepted" style="margin-bottom:3px" dismissible :show="showDismissibleAlert" @dismissed="hideCookieNotice">
+            <b-alert variant="primary" v-if="!$globals.cookiesAccepted" style="margin-bottom:3px" dismissible :show="showDismissibleAlert" @dismissed="hideCookieNotice">
             <h5>
             Using multi.tube means you agree to our <a href="#" v-b-toggle.collapse3>use of cookies</a>. 
             </h5>

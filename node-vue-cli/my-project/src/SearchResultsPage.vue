@@ -36,7 +36,9 @@
             </div>
         </b-col>
 
-        <infinite-loading ref="infiniteLoading" @infinite="infiniteHandler"></infinite-loading>
+        <infinite-loading ref="infiniteLoading" @infinite="infiniteHandler">
+          <span slot="no-results"></span>
+        </infinite-loading>
 
       </b-row>
     </b-container>

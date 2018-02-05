@@ -8,3 +8,4 @@ RUN npm install -S vue-resource
 RUN npm install -S vue-router
 RUN npm install -S vue-awesome
 RUN npm install -S vue-infinite-loading
+RUN npm install -S vue-slider-component

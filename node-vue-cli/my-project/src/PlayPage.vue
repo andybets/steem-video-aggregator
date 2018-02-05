@@ -7,7 +7,7 @@
           <b-container fluid class="leftpanel px-lg-2 pl-xl-5">
             <b-row>
               <b-col>
-                <b-container fluid class="videopanel">
+                <b-container fluid class="videopanel px-lg-5 px-xl-0">
                   <b-row >
                     <b-col id="videoarea">
                       <player-youtube v-if="info.video_type=='youtube'" :videoid="info.video_id"></player-youtube>
@@ -45,7 +45,59 @@
                       </a>
                     </b-col >
                     <b-col cols="auto">
-                      <div v-text="info.payout_string" class="float-right" style="font-size:1.1em;font-weight:800;"></div>
+
+                      <div id="popoverPayout-sync" v-text="info.payout_string" class="float-right" style="cursor:pointer;font-size:1.2em;font-weight:800;"></div>
+                      <b-popover :show.sync="show_vote_contributions" target="popoverPayout-sync" title="Vote Contributions">
+                        <div style="width:200px;height:1px"></div> 
+                        <b-container v-if="show_vote_contributions" class="px-0 mx-0" v-click-outside="closeVoteContributions">
+                          <b-row no-gutters>
+                            <b-col cols="12" >
+                              <b-container style="border-bottom:1px solid #EEEEEE;" class="px-0 mx-0" v-for="c in info.vote_contributions" :key="c.voter">
+                                <b-row no-gutters>
+                                  <b-col cols="7">
+                                    <a style="font-weight:800" v-if="c.voter==$globals.username" v-text="c.voter" :href="'https://steemit.com/@' + c.voter" target="_blank"></a>
+                                    <a v-else v-text="c.voter" :href="'https://steemit.com/@' + c.voter" target="_blank"></a>
+                                  </b-col>
+                                  <b-col cols="5" style="text-align:right">
+                                    <span v-html="c.contribution"></span>
+                                  </b-col>
+                                </b-row>
+                              </b-container>
+                            </b-col>
+                          </b-row>
+                        </b-container>
+                      </b-popover>
+
+
+                      <div style="text-align:center">
+                        <icon v-if="up_voting" :color="'green'" name="spinner" scale="1.5" spin></icon>
+                        <icon id="popoverUpVote-sync" v-else :color="up_vote_hover||up_voted ? 'green' : 'grey'" name="arrow-circle-up" scale="1.75" @mouseover.native="up_vote_hover=true"  @mouseleave.native="up_vote_hover=false" @click.native="checkUpVote"></icon>
+                        <b-popover :show.sync="show_up_vote_slider" target="popoverUpVote-sync">
+                          <div style="width:300px;height:1px"></div>
+                          <b-container v-if="show_up_vote_slider" v-click-outside="closeVoteSliders">
+                            <b-row no-gutters>
+                              <b-col cols="12">
+                                <vue-slider ref="up_vote_slider" v-model="vote_percent"></vue-slider>
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </b-popover>
+
+                        <icon v-if="down_voting" :color="'red'" name="spinner" scale="1.5" spin></icon>
+                        <icon id="popoverDownVote-sync" v-else :color="down_vote_hover||down_voted ? 'red' : 'grey'" name="arrow-circle-down" scale="1.75" @mouseover.native="down_vote_hover=true"  @mouseleave.native="down_vote_hover=false"  @click.native="checkDownVote"></icon>
+                        <b-popover :show.sync="show_down_vote_slider" target="popoverDownVote-sync">
+                          <div style="width:300px;height:1px"></div> 
+                          <b-container v-if="show_down_vote_slider" v-click-outside="closeVoteSliders">
+                            <b-row no-gutters>
+                              <b-col cols="12">
+                                <vue-slider ref="down_vote_slider" v-model="vote_percent"></vue-slider>
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </b-popover>
+
+                      </div>
+
                     </b-col>
                   </b-row>
                 </b-container>
@@ -146,22 +198,75 @@
   import bus from './main.js'
   export default {
     name: 'playpage',
+    props: ['author', 'permlink'],
     data () {
       return {
         info: {},
-        video_id: ''
+        video_id: '',
+        vote_percent: this.$globals.default_vote_percent,
+        up_vote_hover: false,
+        down_vote_hover: false,
+        show_up_vote_slider: false,
+        show_down_vote_slider: false,
+        up_voting: false,
+        down_voting: false,
+        up_voted: false,
+        down_voted: false,
+
+        show_vote_contributions: false
       }
     },
     methods: {
       loadVideoInfo: function() {
-        var author = this.$route.params.author;
-        var permlink = this.$route.params.permlink;
-        this.$http.get('/f/api/video/@' + author + '/' + permlink)
+        this.$http.get('/f/api/video/@' + this.author + '/' + this.permlink)
          .then(response => {
             this.info = response.data;
             this.video_id = this.info.video_id;
+            this.$globals.getVotesInfo(this.info.author, this.info.permlink, this.displayVoteInfo, null);
         });
+      },
+
+      checkUpVote: function() {
+        if (this.show_up_vote_slider) {
+          var cmp = this
+          if (this.vote_percent > 0) { this.up_voting = true; }
+          this.$globals.vote(this.info.author, this.info.permlink, parseInt(this.vote_percent*100), function() {
+              cmp.$globals.getVotesInfo(cmp.info.author, cmp.info.permlink, cmp.displayVoteInfo, null);
+          }, function() {
+              cmp.$globals.getVotesInfo(cmp.info.author, cmp.info.permlink, cmp.displayVoteInfo, null);
+          });
+        }
+      },
+      checkDownVote: function() {
+        if (this.show_down_vote_slider) {
+          var cmp = this
+          if (this.vote_percent > 0) { this.down_voting = true; }
+          this.$globals.vote(this.info.author, this.info.permlink, -parseInt(this.vote_percent*100), function() {
+              cmp.$globals.getVotesInfo(cmp.info.author, cmp.info.permlink, cmp.displayVoteInfo, null);
+          }, function() {
+              cmp.$globals.getVotesInfo(cmp.info.author, cmp.info.permlink, cmp.displayVoteInfo, null);
+          });
+        }
+      },
+
+      displayVoteInfo: function(total_payout, up_voted, down_voted, vote_contributions) {
+        this.up_voting = false;
+        this.down_voting = false;
+        this.up_voted = up_voted;
+        this.down_voted = down_voted;
+        this.info.payout_string = '$' + total_payout.toFixed(3);
+        this.info.vote_contributions = vote_contributions;
+        this.$globals.default_vote_percent = this.vote_percent;
+      },
+
+      closeVoteSliders: function() {
+        this.show_up_vote_slider = false;
+        this.show_down_vote_slider = false;
+      },
+      closeVoteContributions: function() {
+        this.show_vote_contributions = false;
       }
+
     },
     created: function() {
       this.loadVideoInfo();
