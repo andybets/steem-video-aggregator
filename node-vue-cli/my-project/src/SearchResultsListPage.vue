@@ -150,7 +150,7 @@
     }
   },
   mounted: function() {
-    this.fetchData();
+    this.loadNewlyDisplayedImages();
   },
   created: function() {
     // prevent repeated initial fetches

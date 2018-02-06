@@ -316,6 +316,18 @@ const router = new VueRouter({
             page_title: 'New Videos', 
             video_list_url: '/f/api/new-videos' }}
     ],
+
+    // todo - improve scroll position retention
+    scrollBehavior (to, from, savedPosition) {
+      if (savedPosition) {
+          return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  resolve(savedPosition)
+                }, 500)
+              })
+      }
+    }
+
 });
 
 new Vue({
@@ -349,7 +361,7 @@ new Vue({
             </b-collapse>
             </b-alert>
             <header-bar></header-bar>
-            <keep-alive include="homepage">
+            <keep-alive :include='["homepage", "searchresultslistpage"]''>
                 <router-view></router-view>
             </keep-alive>
         </div>
