@@ -8,7 +8,7 @@
             <b-container class="py-2 px-0">
               <b-row no-gutters>
                 <b-col cols="auto">
-                  <b-img :src="'https://steemitimages.com/u/' + comment.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
+                  <b-img-lazy :src="'https://steemitimages.com/u/' + comment.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
                 </b-col>
                 <b-col>
                   <b-container fluid>

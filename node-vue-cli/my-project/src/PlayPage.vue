@@ -28,7 +28,7 @@
                   </b-row>
                   <b-row>
                     <b-col cols="auto">
-                      <b-img :src="'https://steemitimages.com/u/' + info.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
+                      <b-img-lazy :src="'https://steemitimages.com/u/' + info.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
                     </b-col>                    
                     <b-col>
                       <span v-for="tag in info.tags"><b-badge v-text="tag" variant="secondary"></b-badge>&nbsp;</span><br>
@@ -137,7 +137,7 @@
                       <b-container class="pt-3 pb-2 mx-0">
                         <b-row no-gutters>
                           <b-col cols="auto">
-                            <b-img :src="'https://steemitimages.com/u/' + comment.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
+                            <b-img-lazy :src="'https://steemitimages.com/u/' + comment.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
                           </b-col>
                           <b-col>
                             <b-container fluid>
