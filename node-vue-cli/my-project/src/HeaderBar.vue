@@ -19,7 +19,8 @@
                     <a :class="{iconactive: search_form_open}"href="#" v-on:click="openSearch()"><icon name="search" scale="1.7" style="vertical-align:middle"></icon></a>
                     &nbsp;
                     <b-button v-if="!$globals.loggedIn" v-on:click="$globals.startLogin" variant="primary" size="sm">Login</b-button>
-                    <b-img v-else id="popoverLogout-sync" :src="'https://img.busy.org/@' + $globals.username + '?width=32&height=32'" rounded="circle" blank-color="#777"/>
+                    <b-img v-else id="popoverLogout-sync" :src="'https://steemitimages.com/u/' + $globals.username + '/avatar/small'" rounded="circle" blank-color="#777" style="width:32px;height:32px"/>
+
                     <b-popover :show.sync="show_logout_popover" target="popoverLogout-sync">
                       <div style="width:75px;height:1px"></div>
                       <b-container v-show="show_logout_popover" class="px-0 mx-0" v-click-outside="closeLogoutPopover">
