@@ -46,6 +46,7 @@ sys.path.append('/home/flask/app/web/')
 from project import db
 from project.models import Post
 from project.utilities import log,  seconds_from_youtube_duration, get_valid_video, markdown_to_safe_html
+from project.utilities import get_sparkline_data_from_content, get_voters_list_from_content
 
 import json
 import requests
@@ -120,6 +121,15 @@ class PostUpdateThread(Thread):
             if new_type and new_video_id and new_category:
                 post.video_type, post.video_id, post.category = new_type, new_video_id, new_category
             post.description = markdown_to_safe_html(content['body'])
+
+            # update experimental votes information
+            log('Starting vote add...')
+            post.votes_sparkline_data = get_sparkline_data_from_content(content)
+            log(str(post.votes_sparkline_data))
+            post.voters_list = ' '.join(get_voters_list_from_content(content))
+            log(post.voters_list)
+            log('Done vote add!')
+
             post.pending_steem_info_update = False
             post.steem_info_update_requested = None
             db.session.commit()

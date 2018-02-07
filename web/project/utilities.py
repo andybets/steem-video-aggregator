@@ -8,6 +8,7 @@ import json
 import math
 import markdown
 import bleach
+import pandas as pd
 
 # compile regex for checking for youtube videos
 youtube_video_regex = '((\n.{0,3})|(src\s?=\s?.{1}))((http(s)?://youtu.be/)|(http(s)?://www.youtube.com/embed/)|(http(s)?://www.youtube.com/)|(http(s)?://m.youtube.com/))(watch\?v=)?(?P<videoid>(\w|\_|\-)+)'
@@ -153,3 +154,27 @@ def resized_image_url_from_url(url, width=280, height=157):
     url = url.replace('http://', '').replace('https://', '')
     newurl = 'https://images.weserv.nl/?url=' + url + '&w=' + str(width) + '&h=' + str(height) + '&t=letterbox&bg=black'
     return newurl
+
+def get_sparkline_data_from_content(steem_post_content):
+    data = steem_post_content['active_votes']
+    data.append({'time': steem_post_content['created'], 'rshares': 0, 'voter': '', 'weight': 0, 'percent': 0, 'reputation': 0})
+    data.append({'time': datetime.now().strftime('%Y-%m-%-dT%H:%M:%S'), 'rshares': 0, 'voter': '', 'weight': 0, 'percent': 0, 'reputation': 0})
+    df = pd.DataFrame(data)
+    df['rshares'] = df['rshares'].apply(int)
+    times = pd.to_datetime(df['time'])
+    df['interval'] = ((times.astype(pd.np.int64)/10**9)/300).astype(pd.np.int64)
+    df = df[['interval', 'rshares']]
+    dd = []
+    for t in range(df['interval'].min(), df['interval'].max()):
+        dd.append({'interval': t, 'rshares': 0})
+    df2 = pd.DataFrame(dd)
+    df = df.append(df2)
+    df = df.sort_values(['interval'])
+    bins = pd.np.linspace(df.interval.min(), df.interval.max(), 15)
+    df = df.groupby(pd.np.digitize(df.interval, bins))['rshares'].sum()
+    df = df.cumsum()
+    return str(df.tolist())
+
+def get_voters_list_from_content(steem_post_content):
+    data = steem_post_content['active_votes']
+    return [x['voter'] for x in data]

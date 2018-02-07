@@ -47,7 +47,8 @@ configure_uploads(app, images)
 
 from project import db
 from project.models import *
-from project.utilities import get_age_string, get_duration_string, get_payout_string, markdown_to_safe_html, resized_image_url_from_url
+from project.utilities import get_age_string, get_duration_string, get_payout_string, markdown_to_safe_html
+from project.utilities import resized_image_url_from_url, get_sparkline_data_from_content, get_voters_list_from_content
 
 import json
 from contextlib import suppress
@@ -77,7 +78,7 @@ def create_video_summary_fields(df, filter_data={}):
 
     return df[['author', 'permlink', 'category', 'title', 'title_truncated', 'created', 'age_string', 'payout_string',
              'duration_string', 'video_type', 'video_id', 'video_thumbnail_image_url', 'video_post_delay_days',
-             'trending_score', 'hot_score']]
+             'trending_score', 'hot_score', 'votes_sparkline_data']]
 
 # appends the query dict (from json filter data) to existing query
 def apply_filter_to_query(original_query, filter_data):
@@ -273,6 +274,11 @@ def votes(author=None, permlink=None):
 ########################################################################
 
 # DEBUGGING AND EXPERIMENTAL PAGES (NOT USED IN VUE APP) ###############
+
+@app.route('/f/api/vtp/@<author>/<permlink>')
+def vote_time_profile(author, permlink):
+    content = steem.get_content(author, permlink)
+    return str(get_sparkline_data_from_content(content))
 
 @app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/raw/@<author>/<permlink>')
 def raw(author, permlink):
