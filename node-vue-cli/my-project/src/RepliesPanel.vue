@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="action-link" @click="fetchData" v-show="!loaded">Show Replies</div>
+    <div class="action-link" @click="fetchData" v-show="!loaded" v-text="link_text"></div>
     <div v-show="loaded">
       <b-container fluid class="repliespanel">
         <b-row v-for="comment in replies" :key="comment.permlink">
@@ -8,7 +8,7 @@
             <b-container class="py-2 px-0">
               <b-row no-gutters>
                 <b-col cols="auto">
-                  <b-img-lazy :src="'https://steemitimages.com/u/' + comment.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
+                  <b-img-lazy onerror="this.src='https://steemitimages.com/u/avatarblank/avatar/small'" :src="'https://steemitimages.com/u/' + comment.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
                 </b-col>
                 <b-col>
                   <b-container fluid>
@@ -24,7 +24,7 @@
                     </b-row>
                     <b-row>
                       <b-col>
-                        <replies-panel v-if="comment.reply_count>0" :author="comment.author" :permlink="comment.permlink" :reply_count="comment.reply_count"></replies-panel>
+                        <replies-panel v-if="comment.reply_count>0" :author="comment.author" :permlink="comment.permlink" :reply_count="comment.reply_count" :link_text="'Show Replies'"></replies-panel>
                       </b-col>
                     </b-row>
                   </b-container>
@@ -42,7 +42,7 @@
   import { bus } from './main.js'
   export default {
     name: 'repliespanel',
-    props: ['author', 'permlink', 'reply_count'],
+    props: ['author', 'permlink', 'reply_count', 'link_text'],
     methods: {
       fetchData: function() {
         this.$http.get('/f/api/replies/@' + this.author + '/' + this.permlink)
