@@ -37,7 +37,18 @@
               </a>
             </span>
             </div>
-            <div class="video-payout-string">{{ v.payout_string }}</div>
+            <div>
+              <span class="video-payout-string">{{ v.payout_string }}</span>
+              <trend v-if="v.votes_sparkline_data" 
+                :width="30"
+                :height="12"
+                :data="JSON.parse(v.votes_sparkline_data)"
+                :gradient="['#333', '#333', '#333']"
+                :stroke-width="1"
+                :padding="1" 
+                >
+              </trend>
+            </div>
           </div>
         </b-col>
 
@@ -135,9 +146,11 @@
           })
        },
 
+      // todo - remove this hack for loading lazy images
       loadNewlyDisplayedImages: function() {
         for (var i=0; i<4; i++) {
-          window.setTimeout(function() {window.scroll(window.scrollX, window.scrollY+1)}, 200*i);
+          window.setTimeout(function() {window.dispatchEvent(new Event('resize'))}, 200);
+          window.setTimeout(function() {console.log('t'); window.scroll(window.scrollX, window.scrollY+1)}, 200*i);
           window.setTimeout(function() {window.scroll(window.scrollX, window.scrollY-1)}, 200*i);
         }
       }
@@ -219,7 +232,7 @@ a {
 
 .video-payout-string {
   font-family: 'Roboto', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  font-size: 0.8rem; 
+  font-size: 0.85rem; 
 }
 
 .video-age-string {

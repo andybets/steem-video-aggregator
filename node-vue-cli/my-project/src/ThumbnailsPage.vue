@@ -30,7 +30,18 @@
                       <b-img src='/dist/images/youtube-icon.png'/>
                     </a>
                   </div>
-                  <div class="video-payout-string">{{ v.payout_string }}</div>
+                  <div style="text-align:center">
+                    <span class="video-payout-string">{{ v.payout_string }}</span>
+                    <trend v-if="v.votes_sparkline_data" 
+                      :width="30"
+                      :height="12"
+                      :data="JSON.parse(v.votes_sparkline_data)"
+                      :gradient="['#333', '#333', '#333']"
+                      :stroke-width="1"
+                      :padding="1" 
+                      >
+                    </trend>
+                  </div>
                 </div>
             </div>
         </b-col>
@@ -195,7 +206,7 @@ a {
 
 .video-payout-string {
   font-family: 'Roboto', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  font-size: 0.8rem; 
+  font-size: 0.85rem; 
 }
 
 .video-age-string {

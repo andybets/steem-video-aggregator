@@ -19,13 +19,13 @@ import "bootstrap-vue/dist/bootstrap-vue.css"
 import VueCarousel from 'vue-carousel';
 import InfiniteLoading from 'vue-infinite-loading';
 import vueSlider from 'vue-slider-component';
-//import vueSlider from 'vue-slider-component/src/vue2-slider.vue'
+import Trend from 'vuetrend';
 
 Vue.use(BootstrapVue);
 Vue.use(vueResource);
 Vue.use(VueRouter);
 Vue.use(VueCarousel);
-//Vue.use(vueSlider);
+Vue.use(Trend);
 
 Vue.component('vue-slider', vueSlider);
 
