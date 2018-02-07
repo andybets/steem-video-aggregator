@@ -150,7 +150,7 @@
       loadNewlyDisplayedImages: function() {
         for (var i=0; i<4; i++) {
           window.setTimeout(function() {window.dispatchEvent(new Event('resize'))}, 200);
-          window.setTimeout(function() {console.log('t'); window.scroll(window.scrollX, window.scrollY+1)}, 200*i);
+          window.setTimeout(function() {window.scroll(window.scrollX, window.scrollY+1)}, 200*i);
           window.setTimeout(function() {window.scroll(window.scrollX, window.scrollY-1)}, 200*i);
         }
       }

@@ -162,18 +162,23 @@ def get_sparkline_data_from_content(steem_post_content):
     df = pd.DataFrame(data)
     df['rshares'] = df['rshares'].apply(int)
     times = pd.to_datetime(df['time'])
-    df['interval'] = ((times.astype(pd.np.int64)/10**9)/300).astype(pd.np.int64)
+    df['interval'] = ((times.astype(pd.np.int64)/10**9)/60).astype(pd.np.int64) # one minute interval
     df = df[['interval', 'rshares']]
     dd = []
+    mins = 0
     for t in range(df['interval'].min(), df['interval'].max()):
         dd.append({'interval': t, 'rshares': 0})
+        mins += 1
+        if mins > 10080: # limit to one week of votes
+            break
     df2 = pd.DataFrame(dd)
     df = df.append(df2)
     df = df.sort_values(['interval'])
-    bins = pd.np.linspace(df.interval.min(), df.interval.max(), 15)
+    # group into 20 bins for sparkline values
+    bins = pd.np.linspace(df.interval.min(), df.interval.max(), 20)
     df = df.groupby(pd.np.digitize(df.interval, bins))['rshares'].sum()
     df = df.cumsum()
-    return str(df.tolist())
+    return str([0] + df.tolist())
 
 def get_voters_list_from_content(steem_post_content):
     data = steem_post_content['active_votes']
