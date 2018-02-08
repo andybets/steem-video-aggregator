@@ -49,6 +49,7 @@ from project import db
 from project.models import *
 from project.utilities import get_age_string, get_duration_string, get_payout_string, markdown_to_safe_html
 from project.utilities import resized_image_url_from_url, get_sparkline_data_from_content, get_voters_list_from_content
+from project.utilities import tlog
 
 import json
 from contextlib import suppress
@@ -205,8 +206,10 @@ def search(search_terms, limit='50'):
 
 @app.route('/f/api/video/@<author>/<permlink>')
 def video(author=None, permlink=None):
+    tlog('Incoming Request: ' + author + '/' + permlink)
     post = db.session.query(Post) \
                 .filter(and_(Post.author==author, Post.permlink==permlink)).order_by(Post.video_info_update_requested).first()
+    tlog('Done DB Query: ' + author + '/' + permlink)
     if post:
         post_dict = {
             'title': post.title,
@@ -223,26 +226,9 @@ def video(author=None, permlink=None):
             'video_id': post.video_id,
             'video_source': ''
         }
-
-        comments = []
-        if True:
-            replies = steem.get_content_replies(author, permlink)
-            for reply in replies:
-                comment = {
-                    'author': reply['author'],
-                    'permlink': reply['permlink'],
-                    'age_string': get_age_string(datetime.strptime(reply['created'], '%Y-%m-%dT%H:%M:%S')),
-                    'created': datetime.strptime(reply['created'], '%Y-%m-%dT%H:%M:%S'),
-                    'payout_string': get_payout_string(float(reply['pending_payout_value'].split(' ')[0]) + float(reply['total_payout_value'].split(' ')[0])),
-                    'body': markdown_to_safe_html(reply['body']),
-                    'reply_count': int(reply['children']),
-                    'upvotes': 0,
-                    'downvotes': 0
-                }
-                comments.append(comment)
-            post_dict['comments'] = comments
-
-        return jsonify(post_dict)
+        json = jsonify(post_dict)
+        tlog('Ready to return JSON: ' + author + '/' + permlink)
+        return json
     else:
         return 'Video Not Found for: ' + str(author) + '/' + str(permlink)
 

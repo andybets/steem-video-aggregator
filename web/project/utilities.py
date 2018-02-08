@@ -19,6 +19,11 @@ def log(s):
         f.write(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ', ')
         f.write(str(s) + '\n')
 
+def tlog(s):
+    with open('traffic-log.txt', 'a') as f:
+        f.write(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ', ')
+        f.write(str(s) + '\n')
+
 def get_payout_string(payout):
     return "${:.2f}".format(payout)
 

@@ -23,6 +23,7 @@ __pycache__/
 
 # miscellaneous
 monitor-log.txt
+traffic-log.txt
 
 # node modules generated in docker build process
 /node-vue-cli/node_modules/
