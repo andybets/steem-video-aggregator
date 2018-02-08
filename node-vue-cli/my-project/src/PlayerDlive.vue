@@ -29,8 +29,11 @@
     },
     methods: {
       resizeVideo: function() {
-        document.getElementById('player').width = document.getElementById('videoarea').clientWidth - 30;
-        document.getElementById('player').height = document.getElementById('player').width * (9/16);
+        try {
+          document.getElementById('player').width = document.getElementById('videoarea').clientWidth - 30;
+          document.getElementById('player').height = document.getElementById('player').width * (9/16);
+        } catch (e) {}
+          
 //        document.getElementById('playerholder').width = document.getElementById('videoarea').clientWidth - 30;
 //        document.getElementById('playerholder').height = document.getElementById('playerholder').width * (9/16);
       },
