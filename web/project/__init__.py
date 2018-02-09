@@ -261,7 +261,7 @@ def votes(author=None, permlink=None):
 
 # DEBUGGING AND EXPERIMENTAL PAGES (NOT USED IN VUE APP) ###############
 
-@app.route('/f/api/vtp/@<author>/<permlink>')
+@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/vtp/@<author>/<permlink>')
 def vote_time_profile(author, permlink):
     content = steem.get_content(author, permlink)
     return str(get_sparkline_data_from_content(content))
