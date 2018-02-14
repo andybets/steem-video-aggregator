@@ -20,6 +20,7 @@ import VueCarousel from 'vue-carousel';
 import InfiniteLoading from 'vue-infinite-loading';
 import vueSlider from 'vue-slider-component';
 import Trend from 'vuetrend';
+import InputTag from 'vue-input-tag';
 
 Vue.use(BootstrapVue);
 Vue.use(vueResource);
@@ -28,6 +29,7 @@ Vue.use(VueCarousel);
 Vue.use(Trend);
 
 Vue.component('vue-slider', vueSlider);
+Vue.component('input-tag', InputTag);
 
 var Icon = require('vue-awesome');
 Vue.component('icon', Icon);
@@ -83,6 +85,8 @@ const globals = new Vue({
 
             filter_exclude_old_video: 'true',
             filter_exclude_nsfw: 'true',
+            filter_excluded_voters: [],
+            filter_included_voters: [],
             filter_reputation_active: 'false',
             filter_quick_play_enabled: 'false',
 
@@ -98,6 +102,8 @@ const globals = new Vue({
         filter_sort_selection: function() { this.saveFilterValues() },
         filter_exclude_old_video: function() { this.saveFilterValues() },
         filter_exclude_nsfw: function() { this.saveFilterValues() },
+        filter_excluded_voters: function() { this.saveFilterValues() },
+        filter_included_voters: function() { this.saveFilterValues() },
         filter_reputation_active: function() { this.saveFilterValues() },
         filter_quick_play_enabled: function() { this.saveFilterValues() }
     },
@@ -248,7 +254,8 @@ const globals = new Vue({
             }
 
             // update state of preferences for visual indications
-            if ((this.filter_exclude_old_video != 'true') || (this.filter_exclude_nsfw != 'true') ) {
+            if ((this.filter_exclude_old_video != 'true') || (this.filter_exclude_nsfw != 'true') 
+                || this.filter_excluded_voters.length > 0 || this.filter_included_voters.length > 0) {
                 this.preferences_not_default = true;
             } else {
                 this.preferences_not_default = false;
@@ -260,6 +267,8 @@ const globals = new Vue({
             localStorage.setItem('filter_sort_selection', this.filter_sort_selection);
             localStorage.setItem('filter_exclude_old_video', this.filter_exclude_old_video);
             localStorage.setItem('filter_exclude_nsfw', this.filter_exclude_nsfw);
+            localStorage.setItem('filter_excluded_voters', JSON.stringify(this.filter_excluded_voters));
+            localStorage.setItem('filter_included_voters', JSON.stringify(this.filter_included_voters));
             localStorage.setItem('filter_reputation_active', this.filter_reputation_active);
             localStorage.setItem('filter_quick_play_enabled', this.filter_quick_play_enabled);
             bus.$emit('filtersChanged'); // todo - prevent this firing several time on initial fetch if it does
@@ -272,6 +281,8 @@ const globals = new Vue({
                 this.filter_sort_selection = localStorage['filter_sort_selection'];
                 this.filter_exclude_old_video = localStorage['filter_exclude_old_video'];
                 this.filter_exclude_nsfw = localStorage['filter_exclude_nsfw'];
+                this.filter_excluded_voters = JSON.parse(localStorage['filter_excluded_voters']);
+                this.filter_included_voters = JSON.parse(localStorage['filter_included_voters']);
                 this.filter_reputation_active = localStorage['filter_reputation_active'];
                 this.filter_quick_play_enabled = localStorage['filter_quick_play_enabled'];
             }

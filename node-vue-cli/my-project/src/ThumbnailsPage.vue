@@ -98,6 +98,8 @@
               filter_sort_selection: this.$globals.filter_sort_selection,            
               filter_exclude_old_video: this.$globals.filter_exclude_old_video,
               filter_exclude_nsfw: this.$globals.filter_exclude_nsfw,
+              filter_excluded_voters: this.$globals.filter_excluded_voters,
+              filter_included_voters: this.$globals.filter_included_voters,
               filter_reputation_active: this.$globals.filter_reputation_active,
               filter_quick_play_enabled: this.$globals.filter_quick_play_enabled
             }
@@ -123,6 +125,8 @@
               filter_sort_selection: this.$globals.filter_sort_selection,            
               filter_exclude_old_video: this.$globals.filter_exclude_old_video,
               filter_exclude_nsfw: this.$globals.filter_exclude_nsfw,
+              filter_excluded_voters: this.$globals.filter_excluded_voters,
+              filter_included_voters: this.$globals.filter_included_voters,
               filter_reputation_active: this.$globals.filter_reputation_active,
               filter_quick_play_enabled: this.$globals.filter_quick_play_enabled
             }

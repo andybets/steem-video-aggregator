@@ -107,6 +107,23 @@ def apply_filter_to_query(original_query, filter_data):
     if filter_data.get('filter_exclude_nsfw', 'false') == 'true':
         new_query = new_query.filter(not_(Post.is_nsfw))
 
+    # voter exclusions filter (removes posts voted by any of first five accounts in filter)
+    exclusions_list = filter_data.get('filter_excluded_voters', [])[:5]
+    voter_filter_list = []
+    for account in exclusions_list:
+        voter_filter_list.append(Post.voters_list_ts_vector.match(account, postgresql_regconfig='english'))
+    if voter_filter_list:
+        new_query = new_query.filter(not_(or_(*voter_filter_list)))
+
+    # voter inclusions filter (requires posts voted by any of first five accounts in filter)
+    inclusions_list = filter_data.get('filter_included_voters', [])[:5]
+    voter_filter_list = []
+    for account in inclusions_list:
+        if len(account) > 2:
+            voter_filter_list.append(Post.voters_list_ts_vector.match(account, postgresql_regconfig='english'))
+    if voter_filter_list:
+        new_query = new_query.filter(or_(*voter_filter_list))
+
     return new_query
 
 def apply_sort_to_query(original_query, filter_data):

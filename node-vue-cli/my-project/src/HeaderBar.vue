@@ -114,6 +114,26 @@
                                  unchecked-value="false">
                   Videos uploaded more than 7 days before the post.
                 </b-form-checkbox><br>
+
+                <label for="excluded_voters">Videos which were voted for by any of these accounts</label>
+                <input-tag id="excluded_voters"
+                           :tags.sync="$globals.filter_excluded_voters"
+                           placeholder="press enter between account names">
+                </input-tag>
+
+                <br>
+
+                <h5>Include only...</h5>
+
+                <label for="included_voters">Videos which were voted for by any of these accounts</label>
+                <input-tag id="included_voters"
+                           :tags.sync="$globals.filter_included_voters"
+                           placeholder="press enter between account names">
+                </input-tag>
+
+                <br>
+
+<!--
                 <h5>Options</h5>
                 <b-form-checkbox disabled id="reputation_filter_active"
                                  v-model="$globals.filter_reputation_active"
@@ -127,6 +147,7 @@
                                  unchecked-value="false">
                   Clicking thumbnails plays video in place.
                 </b-form-checkbox><br>
+//-->                
 
                 <!-- todo - add exclusions filter for authors/tags //-->
 
@@ -277,6 +298,22 @@ body {
 }
 .iconmodified {
   color:green!important;
+}
+
+.vue-input-tag-wrapper .input-tag {
+    background-color: #007bff!important;
+    border-radius: 2px;
+    border: 1px solid #007bff!important;
+    color: #fff!important;
+}
+.vue-input-tag-wrapper .input-tag .remove:before {
+  color:white!important;
+}
+.vue-input-tag-wrapper .new-tag {
+  width: 250px!important;
+}
+.vue-input-tag-wrapper {
+  margin-right: 40px!important;
 }
 
 </style>

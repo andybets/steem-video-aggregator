@@ -10,3 +10,4 @@ RUN npm install -S vue-awesome
 RUN npm install -S vue-infinite-loading
 RUN npm install -S vue-slider-component
 RUN npm install -S vuetrend
+RUN npm install -S vue-input-tag
