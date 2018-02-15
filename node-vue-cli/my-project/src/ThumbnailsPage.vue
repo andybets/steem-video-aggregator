@@ -113,6 +113,7 @@
             rrr.videos = response.data.filter(function(result) {
               return true;
             });
+            rrr.loadNewlyDisplayedImages();
           });
         }, 100);
 
@@ -141,6 +142,7 @@
             this.videos = response.data.filter(function(result) {
               return true;
             });
+            this.loadNewlyDisplayedImages();
             // if server didn't send requested number of videos, prevent further load attempts
             if (this.videos.length < this.thumbnail_target) {
               $state.complete();
@@ -148,7 +150,16 @@
               $state.loaded();
             }
           })
-       }
+       },
+
+      // todo - remove this hack for loading lazy images
+      loadNewlyDisplayedImages: function() {
+        for (var i=0; i<4; i++) {
+          window.setTimeout(function() {window.dispatchEvent(new Event('resize'))}, 200);
+          window.setTimeout(function() {window.scroll(window.scrollX, window.scrollY+1)}, 200*i);
+          window.setTimeout(function() {window.scroll(window.scrollX, window.scrollY-1)}, 200*i);
+        }
+      }
 
     },
     data () {
@@ -158,18 +169,25 @@
     }
   },
   mounted: function() {
-    this.fetchData();
   },
   created: function() {
-    // prevent repeated initial fetches
+  },
+  beforeDestroy: function() {
+  },
+
+  activated: function() {
+    this.fetchData();
+
     var cmp = this;
     setTimeout(function() {
       bus.$on('filtersChanged', cmp.fetchData);
-    }, 500)
+      console.log('Added filtersChanged event handler in thumbnails.');
+    }, 500)    
   },
-  beforeDestroy: function() {
+  deactivated: function() {
     bus.$off();
-  }
+    console.log('Removed filtersChanged event handler in thumbnails.');
+  },
 
 }
 

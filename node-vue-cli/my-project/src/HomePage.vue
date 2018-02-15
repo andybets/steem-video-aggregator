@@ -265,20 +265,21 @@
   },
   created: function() {
   },
-  deactivated: function() {
-    bus.$off();
-
-  },
   activated: function() {
     // prevent repeated initial fetches
     var cmp = this;
     setTimeout(function() {
       bus.$on('filtersChanged', cmp.fetchData);
+      console.log('Added filtersChanged event handler in homepage.');
     }, 500)
 
     this.fetchData();
-
+  },
+  deactivated: function() {
+    bus.$off();
+    console.log('Removed filtersChanged event handler in homepage.');
   }
+
 }
 
 </script>

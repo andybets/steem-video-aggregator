@@ -145,6 +145,7 @@
             this.videos = response.data.filter(function(result) {
               return true;
             });
+            this.loadNewlyDisplayedImages();
             // if server didn't send requested number of videos, prevent further load attempts
             if (this.videos.length < this.search_results_target) {
               $state.complete();
@@ -171,20 +172,26 @@
     }
   },
   mounted: function() {
-    this.loadNewlyDisplayedImages();
   },
   created: function() {
-    // prevent repeated initial fetches
+  },
+  beforeDestroy: function() {
+  },
+
+  activated: function() {
+    this.loadNewlyDisplayedImages();
+
     var cmp = this;
     setTimeout(function() {
       bus.$on('filtersChanged', cmp.fetchData);
-      console.log('Added filtersChanged event handler.');
-    }, 500)
+      console.log('Added filtersChanged event handler in search.');
+    }, 500)    
   },
-  beforeDestroy: function() {
+  deactivated: function() {
     bus.$off();
-    console.log('Removed filtersChanged event handler.');
-  }
+    console.log('Removed filtersChanged event handler in search.');
+  },
+
 
 }
 
