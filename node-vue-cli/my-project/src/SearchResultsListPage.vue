@@ -96,7 +96,7 @@
         this.$refs.infiniteLoading.stateChanger.reset();
         var filter_data = {
               filter_age_selection: this.$globals.filter_age_selection,
-              filter_type_selection: this.$globals.filter_type_selection,
+              filter_included_types: this.$globals.filter_included_types,
               filter_duration_selection: this.$globals.filter_duration_selection,
               filter_sort_selection: this.$globals.filter_sort_selection,            
               filter_exclude_old_video: this.$globals.filter_exclude_old_video,
@@ -124,7 +124,7 @@
         this.search_results_target += 50;
         var filter_data = {
               filter_age_selection: this.$globals.filter_age_selection,
-              filter_type_selection: this.$globals.filter_type_selection,
+              filter_included_types: this.$globals.filter_included_types,
               filter_duration_selection: this.$globals.filter_duration_selection,
               filter_sort_selection: this.$globals.filter_sort_selection,            
               filter_exclude_old_video: this.$globals.filter_exclude_old_video,

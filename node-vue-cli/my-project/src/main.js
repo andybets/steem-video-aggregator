@@ -63,6 +63,7 @@ Vue.directive('click-outside', {
   },
 });
 
+
 // plugin to store global app state
 const globals = new Vue({
     data: function() {
@@ -79,7 +80,7 @@ const globals = new Vue({
 
             search_terms: '',
             filter_age_selection: 'all',
-            filter_type_selection: 'all',
+            filter_included_types: ['youtube', 'dtube'],
             filter_duration_selection: 'all',
             filter_sort_selection: 'date',            
 
@@ -97,7 +98,7 @@ const globals = new Vue({
     },
     watch: {
         filter_age_selection: function() { this.saveFilterValues() },
-        filter_type_selection: function() { this.saveFilterValues() },
+        filter_included_types: function() { this.saveFilterValues() },
         filter_duration_selection: function() { this.saveFilterValues() },
         filter_sort_selection: function() { this.saveFilterValues() },
         filter_exclude_old_video: function() { this.saveFilterValues() },
@@ -246,7 +247,9 @@ const globals = new Vue({
 
         saveFilterValues: function() {
             // update state of filters for visual indications
-            if ((this.filter_age_selection != 'all') || (this.filter_type_selection != 'all') 
+            //if ((this.filter_age_selection != 'all') || (this.filter_type_selection != 'all') 
+            if ((this.filter_age_selection != 'all') 
+                || !(JSON.stringify(this.filter_included_types.slice().sort())==JSON.stringify(['youtube', 'dtube'].sort()) ) 
                 || (this.filter_duration_selection != 'all') || (this.filter_sort_selection != 'date') ) {
                 this.filter_not_default = true;
             } else {
@@ -262,7 +265,7 @@ const globals = new Vue({
             }
 
             localStorage.setItem('filter_age_selection', this.filter_age_selection);
-            localStorage.setItem('filter_type_selection', this.filter_type_selection);
+            localStorage.setItem('filter_included_types', JSON.stringify(this.filter_included_types));
             localStorage.setItem('filter_duration_selection', this.filter_duration_selection);
             localStorage.setItem('filter_sort_selection', this.filter_sort_selection);
             localStorage.setItem('filter_exclude_old_video', this.filter_exclude_old_video);
@@ -276,7 +279,7 @@ const globals = new Vue({
         loadFilterValues: function() {
             if (localStorage["filter_exclude_old_video"]) { // all saved when one is, so just need to check one
                 this.filter_age_selection = localStorage['filter_age_selection'];
-                this.filter_type_selection = localStorage['filter_type_selection'];
+                this.filter_included_types = JSON.parse(localStorage['filter_included_types']);
                 this.filter_duration_selection = localStorage['filter_duration_selection'];
                 this.filter_sort_selection = localStorage['filter_sort_selection'];
                 this.filter_exclude_old_video = localStorage['filter_exclude_old_video'];

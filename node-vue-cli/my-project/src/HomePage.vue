@@ -209,7 +209,7 @@
       fetchData: function() {
         var filter_data = {
               filter_age_selection: this.$globals.filter_age_selection,
-              filter_type_selection: this.$globals.filter_type_selection,
+              filter_included_types: this.$globals.filter_included_types,
               filter_duration_selection: this.$globals.filter_duration_selection,
               filter_sort_selection: this.$globals.filter_sort_selection,            
               filter_exclude_old_video: this.$globals.filter_exclude_old_video,
@@ -220,11 +220,8 @@
               filter_quick_play_enabled: this.$globals.filter_quick_play_enabled
             }
         var rr = this;
-//        console.log('>>')
-        console.log(JSON.stringify(filter_data));
         this.$http.post('/f/api/trending-videos', filter_data)
          .then(response => {
-          console.log(response.data);
           rr.trending_videos = response.data.filter(function(result) {
             return true;
           });
@@ -233,7 +230,6 @@
           var rrr = rr;
           rr.$http.post('/f/api/hot-videos', filter_data)
            .then(response => {
-//            console.log(response.data);
             rrr.hot_videos = response.data.filter(function(result) {
               return true;
             });
@@ -241,7 +237,6 @@
         }, 100);
         this.$http.post('/f/api/new-videos', filter_data)
          .then(response => {
-//          console.log(response.data);
           rr.new_videos = response.data.filter(function(result) {
             return true;
           });

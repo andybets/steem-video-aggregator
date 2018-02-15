@@ -92,12 +92,16 @@ def apply_filter_to_query(original_query, filter_data):
         new_query = new_query.filter(Post.created > (datetime.now() - timedelta(days=7)))
     elif filter_data.get('filter_age_selection', 'all') == 'month':
         new_query = new_query.filter(Post.created > (datetime.now() - timedelta(days=30)))
-    if filter_data.get('filter_type_selection', 'all') == 'youtube':
-        new_query = new_query.filter(Post.video_type == 'youtube')
-    elif filter_data.get('filter_type_selection', 'all') == 'dtube':
-        new_query = new_query.filter(Post.video_type == 'dtube')
-    elif filter_data.get('filter_type_selection', 'all') == 'dlive':
-        new_query = new_query.filter(Post.video_type == 'dlive')
+
+    # video type inclusions filter (requires posts to be of type in filter)
+    inclusions_list = filter_data.get('filter_included_types', [])
+    type_filter_list = []
+    for video_type in inclusions_list:
+        type_filter_list.append(Post.video_type == video_type)
+    if type_filter_list:
+        new_query = new_query.filter(or_(*type_filter_list))
+
+
     if filter_data.get('filter_duration_selection', 'all') == 'short':
         new_query = new_query.filter(Post.video_duration_seconds <= 240)
     elif filter_data.get('filter_duration_selection', 'all') == 'long':
@@ -119,8 +123,7 @@ def apply_filter_to_query(original_query, filter_data):
     inclusions_list = filter_data.get('filter_included_voters', [])[:5]
     voter_filter_list = []
     for account in inclusions_list:
-        if len(account) > 2:
-            voter_filter_list.append(Post.voters_list_ts_vector.match(account, postgresql_regconfig='english'))
+        voter_filter_list.append(Post.voters_list_ts_vector.match(account, postgresql_regconfig='english'))
     if voter_filter_list:
         new_query = new_query.filter(or_(*voter_filter_list))
 

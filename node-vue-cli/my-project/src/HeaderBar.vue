@@ -56,11 +56,11 @@
             <b-col class="pl-2 pl-sm-5 pl-md-2 pl-lg-5" cols="6" md="3">
                 <h5>Type</h5>
                 <b-form-group>
-                  <b-form-radio-group v-model="$globals.filter_type_selection"
+                  <b-form-checkbox-group v-model="$globals.filter_included_types"
                                       :options='filter_type_options' 
                                       stacked
-                                      name="filter_type">
-                  </b-form-radio-group>
+                                      name="filter_types">
+                  </b-form-checkbox-group>
                 </b-form-group>
             </b-col>
             <b-col class="pl-2 pl-sm-5 pl-md-2 pl-lg-5" cols="6" md="3">
@@ -165,6 +165,19 @@ export default {
   name: 'headerbar',
   data () {
     return {
+
+
+
+      selected: [], // Must be an array reference!
+      options: [
+        {text: 'Orange', value: 'orange'},
+        {text: 'Apple', value: 'apple'},
+        {text: 'Pineapple', value: 'pineapple'},
+        {text: 'Grape', value: 'grape'}
+      ],
+
+
+
       show_logout_popover: false,
 
       search_form_open: false,
@@ -179,7 +192,7 @@ export default {
           {text: 'This Month', value: 'month'}
       ],
       filter_type_options: [
-          {text: 'All', value: 'all'},
+//          {text: 'All', value: 'all'},
           {text: 'YouTube', value: 'youtube'},
           {text: 'DTube', value: 'dtube'},
           {text: 'DLive', value: 'dlive'}
