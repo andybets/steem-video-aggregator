@@ -115,6 +115,12 @@
                   Videos uploaded more than 7 days before the post.
                 </b-form-checkbox><br>
 
+                <label for="excluded_authors">Videos which were not posted by any of these accounts</label>
+                <input-tag id="excluded_authors"
+                           :tags.sync="$globals.filter_excluded_authors"
+                           placeholder="press enter between account names">
+                </input-tag>
+                <div style="height:10px"></div>
                 <label for="excluded_voters">Videos which were voted for by any of these accounts</label>
                 <input-tag id="excluded_voters"
                            :tags.sync="$globals.filter_excluded_voters"
@@ -125,6 +131,12 @@
 
                 <h5>Include only...</h5>
 
+                <label for="included_authors">Videos which were posted by any of these accounts</label>
+                <input-tag id="included_authors"
+                           :tags.sync="$globals.filter_included_authors"
+                           placeholder="press enter between account names">
+                </input-tag>
+                <div style="height:10px"></div>
                 <label for="included_voters">Videos which were voted for by any of these accounts</label>
                 <input-tag id="included_voters"
                            :tags.sync="$globals.filter_included_voters"

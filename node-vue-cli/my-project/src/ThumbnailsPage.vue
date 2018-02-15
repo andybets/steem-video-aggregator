@@ -100,6 +100,8 @@
               filter_exclude_nsfw: this.$globals.filter_exclude_nsfw,
               filter_excluded_voters: this.$globals.filter_excluded_voters,
               filter_included_voters: this.$globals.filter_included_voters,
+              filter_excluded_authors: this.$globals.filter_excluded_authors,
+              filter_included_authors: this.$globals.filter_included_authors,
               filter_reputation_active: this.$globals.filter_reputation_active,
               filter_quick_play_enabled: this.$globals.filter_quick_play_enabled
             }
@@ -127,6 +129,8 @@
               filter_exclude_nsfw: this.$globals.filter_exclude_nsfw,
               filter_excluded_voters: this.$globals.filter_excluded_voters,
               filter_included_voters: this.$globals.filter_included_voters,
+              filter_excluded_authors: this.$globals.filter_excluded_authors,
+              filter_included_authors: this.$globals.filter_included_authors,
               filter_reputation_active: this.$globals.filter_reputation_active,
               filter_quick_play_enabled: this.$globals.filter_quick_play_enabled
             }

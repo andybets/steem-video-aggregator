@@ -111,6 +111,22 @@ def apply_filter_to_query(original_query, filter_data):
     if filter_data.get('filter_exclude_nsfw', 'false') == 'true':
         new_query = new_query.filter(not_(Post.is_nsfw))
 
+    # author exclusions filter
+    inclusions_list = filter_data.get('filter_excluded_authors', [])
+    author_filter_list = []
+    for account in inclusions_list:
+        author_filter_list.append(Post.author == account)
+    if author_filter_list:
+        new_query = new_query.filter(not_(or_(*author_filter_list)))
+
+    # author inclusions filter
+    inclusions_list = filter_data.get('filter_included_authors', [])
+    author_filter_list = []
+    for account in inclusions_list:
+        author_filter_list.append(Post.author == account)
+    if author_filter_list:
+        new_query = new_query.filter(or_(*author_filter_list))
+
     # voter exclusions filter (removes posts voted by any of first five accounts in filter)
     exclusions_list = filter_data.get('filter_excluded_voters', [])[:5]
     voter_filter_list = []
