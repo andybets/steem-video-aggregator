@@ -112,8 +112,12 @@ const globals = new Vue({
         filter_quick_play_enabled: function() { this.saveFilterValues() }
     },
     created: function() {
-        // load filter preferences from local storage
-        this.loadFilterValues();
+        // try and load filters/preferences from local storage
+        try {
+            this.loadFilterValues();
+        } catch (e) {
+            console.log('Incompatible filter settings. May not have fully loaded them.')
+        }
 
         steem.api.setOptions({ url: 'https://api.steemit.com' });
 
