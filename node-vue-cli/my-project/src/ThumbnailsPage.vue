@@ -168,13 +168,6 @@
         thumbnail_target: 50
     }
   },
-  mounted: function() {
-  },
-  created: function() {
-  },
-  beforeDestroy: function() {
-  },
-
   activated: function() {
     this.fetchData();
 

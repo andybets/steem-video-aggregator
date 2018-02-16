@@ -263,8 +263,6 @@
         new_videos: []
     }
   },
-  created: function() {
-  },
   activated: function() {
     // prevent repeated initial fetches
     var cmp = this;

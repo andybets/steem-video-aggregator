@@ -177,21 +177,7 @@ export default {
   name: 'headerbar',
   data () {
     return {
-
-
-
-      selected: [], // Must be an array reference!
-      options: [
-        {text: 'Orange', value: 'orange'},
-        {text: 'Apple', value: 'apple'},
-        {text: 'Pineapple', value: 'pineapple'},
-        {text: 'Grape', value: 'grape'}
-      ],
-
-
-
       show_logout_popover: false,
-
       search_form_open: false,
       filter_form_open: false,
       preferences_form_open: false,
@@ -204,7 +190,6 @@ export default {
           {text: 'This Month', value: 'month'}
       ],
       filter_type_options: [
-//          {text: 'All', value: 'all'},
           {text: 'YouTube', value: 'youtube'},
           {text: 'DTube', value: 'dtube'},
           {text: 'DLive', value: 'dlive'}

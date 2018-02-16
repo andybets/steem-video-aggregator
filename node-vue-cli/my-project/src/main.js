@@ -4,7 +4,6 @@ import VueRouter from 'vue-router'
 import vueResource from 'vue-resource'
 import HomePage from './HomePage.vue'
 import PlayPage from './PlayPage.vue'
-import SearchResultsPage from './SearchResultsPage.vue'
 import SearchResultsListPage from './SearchResultsListPage.vue'
 import ThumbnailsPage from './ThumbnailsPage.vue'
 import HeaderBar from './HeaderBar.vue'
@@ -327,7 +326,6 @@ const router = new VueRouter({
         { path: '/@:author/:permlink', component: PlayPage, props: true},
 
         // results pages
-        // todo - allow grid or list views depending on user preferences
         { path: '/search/:search_terms', component: SearchResultsListPage },
         { path: '/trending', component: ThumbnailsPage, props: { 
             page_title: 'Trending Videos', 
