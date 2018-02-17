@@ -237,6 +237,8 @@ const globals = new Vue({
                             return { voter: x.voter, contribution: '<span style="color:green">' + c.toFixed(3) + '</span>' }
                         } else if (c < 0) {
                             return { voter: x.voter, contribution: '<span style="color:red"> ' + c.toFixed(3) + '</span>' }
+                        } else if (c == 0) {
+                            return { voter: x.voter, contribution: '<span style="color:grey"> ' + c.toFixed(3) + '</span>' }
                         }
                     });
                     if (vote_contributions.length > 30) {
