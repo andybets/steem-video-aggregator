@@ -300,6 +300,8 @@ a {
 
 body {
   padding-top: 55px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .iconactive {

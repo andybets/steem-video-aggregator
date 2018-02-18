@@ -7,10 +7,10 @@
           <b-col>
             <b-container class="py-2 px-0">
               <b-row no-gutters>
-                <b-col cols="auto">
+                <b-col cols="auto flex-nowrap">
                   <b-img-lazy onerror="this.src='https://steemitimages.com/u/avatarblank/avatar/small'" :src="'https://steemitimages.com/u/' + comment.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
                 </b-col>
-                <b-col>
+                <b-col cols="">
                   <b-container fluid>
                     <b-row>
                       <b-col>
@@ -24,7 +24,7 @@
                     </b-row>
                     <b-row>
                       <b-col>
-                        <replies-panel v-if="comment.reply_count>0" :author="comment.author" :permlink="comment.permlink" :reply_count="comment.reply_count" :link_text="'Show Replies'"></replies-panel>
+                        <replies-panel v-if="comment.reply_count>0" :author="comment.author" :permlink="comment.permlink" :reply_count="comment.reply_count" :link_text="'Show Replies'" :load="false"></replies-panel>
                       </b-col>
                     </b-row>
                   </b-container>
@@ -42,7 +42,12 @@
   import { bus } from './main.js'
   export default {
     name: 'repliespanel',
-    props: ['author', 'permlink', 'reply_count', 'link_text'],
+    props: ['author', 'permlink', 'reply_count', 'link_text', 'load'],
+    mounted: function() {
+      if (this.load) {
+        setTimeout(this.fetchData, 1000);
+      }
+    },
     methods: {
       fetchData: function() {
         this.$http.get('/f/api/replies/@' + this.author + '/' + this.permlink)

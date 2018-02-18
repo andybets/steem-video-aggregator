@@ -135,8 +135,8 @@
                     <b-col>
                       <b-container class="pt-2 mx-0">
                         <b-row no-gutters>
-                          <b-col cols="auto">
-                            <replies-panel :author="info.author" :permlink="info.permlink" :reply_count="1" :link_text="'Show Comments'"></replies-panel>
+                          <b-col>
+                            <replies-panel :author="info.author" :permlink="info.permlink" :reply_count="1" :link_text="'Show Comments'" :load="true"></replies-panel>
                           </b-col>
                         </b-row>
                       </b-container>
