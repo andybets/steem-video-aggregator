@@ -297,6 +297,13 @@ def votes(author=None, permlink=None):
 
 # DEBUGGING AND EXPERIMENTAL PAGES (NOT USED IN VUE APP) ###############
 
+# testing steem request for getting content and nested replies
+@app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/state/<category>/@<author>/<permlink>')
+def state(category, author, permlink):
+    path = category + '/@' + author + '/' + permlink
+    content = steem.get_state(path)
+    return str(content)
+
 @app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/vtp/@<author>/<permlink>')
 def vote_time_profile(author, permlink):
     content = steem.get_content(author, permlink)
