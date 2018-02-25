@@ -61,7 +61,7 @@ def get_duration_string(seconds):
 def markdown_to_safe_html(s):
     html = s
     try:
-        html = html.replace('\n', '<br>')
+        html = html.replace('\n\n', '\n\n<br>')
         html = markdown.markdown(html)
     except Exception as e:
         log('Problem converting markdown to html: ' + str(e))
