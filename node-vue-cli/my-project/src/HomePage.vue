@@ -19,7 +19,8 @@
                 </div>
                 <div class="video-info-panel">
                   <div class="video-title" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id)">{{ v.title_truncated }}</div>
-                  <div class="video-author-age"><a target="_blank" :href="'https://steemit.com/@' + v.author ">{{ v.author }}</a> - 
+                  <div class="video-author-age">
+                    <span class="author-link" @click="authorLinkClicked(v.author)">{{ v.author }}</span> - 
                     <span v-if="v.video_post_delay_days==0"><font color="#66BB66">{{ v.age_string }}</font></span>
                     <span v-else-if="v.video_post_delay_days<=7">{{ v.age_string }}</span>
                     <span v-else=""><font color="#BB6666">{{ v.age_string }}</font></span>
@@ -77,7 +78,8 @@
                 </div>
                 <div class="video-info-panel">
                   <div class="video-title" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id)">{{ v.title_truncated }}</div>
-                  <div class="video-author-age"><a target="_blank" :href="'https://steemit.com/@' + v.author ">{{ v.author }}</a> - 
+                  <div class="video-author-age">
+                    <span class="author-link" @click="authorLinkClicked(v.author)">{{ v.author }}</span> - 
                     <span v-if="v.video_post_delay_days==0"><font color="#66BB66">{{ v.age_string }}</font></span>
                     <span v-else-if="v.video_post_delay_days<=7">{{ v.age_string }}</span>
                     <span v-else=""><font color="#BB6666">{{ v.age_string }}</font></span>
@@ -135,7 +137,8 @@
                 </div>
                 <div class="video-info-panel">
                   <div class="video-title" v-on:click="playVideo(v.author, v.permlink, v.video_type, v.video_id)">{{ v.title_truncated }}</div>
-                  <div class="video-author-age"><a target="_blank" :href="'https://steemit.com/@' + v.author ">{{ v.author }}</a> - 
+                  <div class="video-author-age">
+                  <span class="author-link" @click="authorLinkClicked(v.author)">{{ v.author }}</span> - 
                     <span v-if="v.video_post_delay_days==0"><font color="#66BB66">{{ v.age_string }}</font></span>
                     <span v-else-if="v.video_post_delay_days<=7">{{ v.age_string }}</span>
                     <span v-else=""><font color="#BB6666">{{ v.age_string }}</font></span> 
@@ -183,6 +186,9 @@
   export default {
     name: 'homepage',
     methods: {
+      authorLinkClicked: function(author) {
+        bus.$emit('authorLinkClicked', author)
+      },
       playVideo: function(author, permlink, video_type, video_id, new_tab) {
         // temporarily used on right-click to open new tab
         // todo - replace with context menu
@@ -274,7 +280,7 @@
     this.fetchData();
   },
   deactivated: function() {
-    bus.$off();
+    bus.$off('filtersChanged');
     console.log('Removed filtersChanged event handler in homepage.');
   }
 

@@ -115,7 +115,7 @@
                   Videos uploaded more than 7 days before the post.
                 </b-form-checkbox><br>
 
-                <label for="excluded_authors">Videos which were not posted by any of these accounts</label>
+                <label for="excluded_authors">Videos which were posted by any of these accounts</label>
                 <input-tag id="excluded_authors"
                            :tags.sync="$globals.filter_excluded_authors"
                            placeholder="press enter between account names">
@@ -161,12 +161,25 @@
                 </b-form-checkbox><br>
 //-->                
 
-                <!-- todo - add exclusions filter for authors/tags //-->
-
             </b-col>
           </b-row>
         </b-container>
       </b-collapse>
+
+    <b-modal ref="authorOptionsModal" centered hide-footer :title="'Author Options for @' + last_selected_author">
+        <div class="text-center py-2">
+          <b-button target="_blank" :href="'https://steemit.com/@' + last_selected_author" variant="link" size="md" type="submit" v-text="'View @' + last_selected_author + ' on Steemit'"></b-button>
+        </div>
+        <div class="text-center py-2">
+          <b-button @click="excludeLastSelectedAuthor" variant="warning" size="md" type="submit" v-text="'Do Not Show Posts by @' + last_selected_author"></b-button>
+        </div>
+        <div class="text-center py-2">
+          <b-button @click="includeOnlyLastSelectedAuthor" variant="success" size="md" type="submit" v-text="'Show Only Posts by @' + last_selected_author"></b-button>
+        </div>
+        <div v-if="author_in_filter" class="text-center py-2">
+          <b-button @click="removeLastSelectedAuthorFromFilters" variant="secondary" size="md" type="submit" v-text="'Remove @' + last_selected_author + ' from Filters'"></b-button>
+        </div>
+    </b-modal>
 
   </div>
 </template>
@@ -181,6 +194,8 @@ export default {
       search_form_open: false,
       filter_form_open: false,
       preferences_form_open: false,
+      last_selected_author: '',
+      author_in_filter: false,
       search_terms: '',
       filter_age_options: [
           {text: 'All', value: 'all'},
@@ -209,6 +224,38 @@ export default {
     }
   },
   methods: {
+    openAuthorOptions: function(author) {
+      this.last_selected_author = author;
+      if (this.$globals.filter_included_authors.indexOf(this.last_selected_author) > -1) {
+        this.author_in_filter = true;
+      } else {
+        this.author_in_filter = false;
+      }
+      this.$refs.authorOptionsModal.show();
+    },
+    hideAuthorOptions: function(author) {
+      this.$refs.authorOptionsModal.hide();
+    },
+    excludeLastSelectedAuthor: function() {
+      this.$globals.filter_excluded_authors.push(this.last_selected_author);
+      this.$refs.authorOptionsModal.hide();
+    },
+    includeOnlyLastSelectedAuthor: function() {
+      this.$globals.filter_included_authors.push(this.last_selected_author);
+      this.$refs.authorOptionsModal.hide();
+    },
+    removeLastSelectedAuthorFromFilters: function() {
+      var index = this.$globals.filter_included_authors.indexOf(this.last_selected_author);
+      if (index > -1) {
+          this.$globals.filter_included_authors.splice(index, 1);
+      }
+      var index = this.$globals.filter_excluded_authors.indexOf(this.last_selected_author);
+      if (index > -1) {
+          this.$globals.filter_excluded_authors.splice(index, 1);
+      }
+      this.$refs.authorOptionsModal.hide();
+    },
+
     openSearch: function() {
       this.search_form_open = !this.search_form_open;
       this.filter_form_open = false;
@@ -246,10 +293,16 @@ export default {
       this.$globals.completeLogin(this.$route.query.access_token);
     }
     window.addEventListener('wheel', this.closeHeaderPanels);
+    bus.$on('authorLinkClicked', this.openAuthorOptions);
   },
   destroyed() {
     window.removeEventListener('wheel', this.closeHeaderPanels);
+  },
+  mounted() {
+  },
+  updated() {
   }
+
 }
 </script>
 
@@ -284,6 +337,11 @@ li {
 
 a {
   color: #42b983;
+}
+
+.author-link {
+  cursor: pointer;
+  color: #000066;
 }
 
 .navbar {

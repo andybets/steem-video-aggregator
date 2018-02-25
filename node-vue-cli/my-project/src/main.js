@@ -388,7 +388,7 @@ new Vue({
             </b-collapse>
             </b-alert>
             <header-bar></header-bar>
-            <keep-alive :include='["homepage", "searchresultslistpage", "thumbnailspage"]''>
+            <keep-alive :include='["homepage", "searchresultslistpage", "thumbnailspage"]'>
                 <router-view></router-view>
             </keep-alive>
         </div>

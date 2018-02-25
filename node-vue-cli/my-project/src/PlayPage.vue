@@ -32,7 +32,8 @@
                     </b-col>                    
                     <b-col>
                       <span v-for="tag in info.tags"><b-badge v-text="tag" variant="secondary"></b-badge>&nbsp;</span><br>
-                      <a :href="'https://steemit.com/@' + info.author"><b v-text="info.author"></b></a> - {{ info.age_string }}
+                      <span class="author-link" @click="authorLinkClicked(info.author)"><b>{{ info.author }}</b></span>
+                       - {{ info.age_string }}
                        on 
                       <a v-if="info.video_type=='dtube'" :href="'https://d.tube/#!/v/' + info.author + '/' + info.permlink" target="_blank">
                         <b-img src='/dist/images/dtube-icon.png'/>
@@ -173,7 +174,7 @@
 </template>
 
 <script>
-  import bus from './main.js'
+  import { bus } from './main.js'
   export default {
     name: 'playpage',
     props: ['author', 'permlink'],
@@ -195,6 +196,9 @@
       }
     },
     methods: {
+      authorLinkClicked: function(author) {
+        bus.$emit('authorLinkClicked', author)
+      },
       loadVideoInfo: function() {
         this.$http.get('/f/api/video/@' + this.author + '/' + this.permlink)
          .then(response => {
