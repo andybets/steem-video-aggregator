@@ -10,7 +10,8 @@ import HeaderBar from './HeaderBar.vue'
 import PlayerYoutube from './PlayerYoutube.vue'
 import PlayerDtube from './PlayerDtube.vue'
 import PlayerDlive from './PlayerDlive.vue'
-import RepliesPanel from './RepliesPanel.vue'
+import CommentPanel from './CommentPanel.vue'
+import CommentInteractionsPanel from './CommentInteractionsPanel.vue'
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
@@ -37,7 +38,8 @@ Vue.component('infinite-loading', InfiniteLoading);
 Vue.component('player-youtube', PlayerYoutube);
 Vue.component('player-dtube', PlayerDtube);
 Vue.component('player-dlive', PlayerDlive);
-Vue.component('replies-panel', RepliesPanel);
+Vue.component('comment-panel', CommentPanel);
+Vue.component('comment-interactions-panel', CommentInteractionsPanel);
 
 export const bus = new Vue();
 
@@ -205,15 +207,61 @@ const globals = new Vue({
                 }
             });
         },
+
         comment: function(parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, success_callback, error_callback) {
-            sc2.comment(parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, function (err, res) {
-                console.log(err, res)
-                if (!err) {
-                    success_callback();
-                } else {
-                    error_callback(err);
+            const operations = [];
+
+            const commentOp = [
+                'comment',
+                {
+                  parent_author: parentAuthor,
+                  parent_permlink: parentPermlink,
+                  author,
+                  permlink,
+                  title,
+                  body,
+                  json_metadata: JSON.stringify(jsonMetadata),
+                },
+            ];
+            operations.push(commentOp);
+
+            const commentOptionsConfig = {
+                author,
+                permlink,
+                allow_votes: true,
+                allow_curation_rewards: true,
+                extensions,
+            };
+
+            const extensions = [[0, {
+              beneficiaries: [
+                {
+                  account: 'multi.tube',
+                  weight: 2500
                 }
-            });            
+              ]
+            }]];
+
+            if (extensions) {
+                commentOptionsConfig.extensions = extensions;
+                commentOptionsConfig.percent_steem_dollars = 10000;
+                commentOptionsConfig.max_accepted_payout = '1000000.000 SBD';
+                operations.push(['comment_options', commentOptionsConfig]);
+            }
+
+            console.log("OPERATIONS", operations)
+
+            if (true) {
+                sc2.broadcast(operations, function (err, res) {
+                    console.log(err, res)
+                    if (!err) {
+                        success_callback();
+                    } else {
+                        error_callback(err);
+                    }
+                    if (commentOp) console.log("ORIGINAL COMMENT OBJECT: ", commentOp);
+                });
+            }
         },
 
         getVotesInfo: function(authur, permlink, success_callback, error_callback) {

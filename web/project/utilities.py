@@ -11,7 +11,7 @@ import bleach
 import pandas as pd
 
 # compile regex for checking for youtube videos
-youtube_video_regex = '((\n.{0,3})|(src\s?=\s?.{1}))((http(s)?://youtu.be/)|(http(s)?://www.youtube.com/embed/)|(http(s)?://www.youtube.com/)|(http(s)?://m.youtube.com/))(watch\?v=)?(?P<videoid>(\w|\_|\-)+)'
+youtube_video_regex = '((($|\n).{0,3})|(src\s?=\s?.{1}))((http(s)?://youtu.be/)|(http(s)?://www.youtube.com/embed/)|(http(s)?://www.youtube.com/)|(http(s)?://m.youtube.com/))(watch\?v=)?(?P<videoid>(\w|\_|\-)+)'
 youtube_video_regex = re.compile(youtube_video_regex)
 
 def log(s):
@@ -25,7 +25,7 @@ def tlog(s):
         f.write(str(s) + '\n')
 
 def get_payout_string(payout):
-    return "${:.2f}".format(payout)
+    return "${:.3f}".format(payout)
 
 # todo - add weeks, months and years
 def get_age_string(dt):

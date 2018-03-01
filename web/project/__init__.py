@@ -250,6 +250,7 @@ def video(author=None, permlink=None):
         post_dict = {
             'title': post.title,
             'author': post.author,
+            'category': post.category,
             'permlink': post.permlink,
             'age_string': get_age_string(post.created),
             'created': post.created,
@@ -268,10 +269,17 @@ def video(author=None, permlink=None):
     else:
         return 'Video Not Found for: ' + str(author) + '/' + str(permlink)
 
-@app.route('/f/api/replies/@<author>/<permlink>')
-def replies(author=None, permlink=None):
-    replies = steem.get_content_replies(author, permlink)
-    comments = []
+@app.route('/f/api/state/<category>/@<author>/<permlink>')
+def state(category, author, permlink):
+    path = category + '/@' + author + '/' + permlink
+    state = steem.get_state(path)
+    content = state['content']
+    post_content = content[author + '/' + permlink]
+    reply_urls = post_content['replies']
+    replies = [content[x] for x in reply_urls]
+    data = {'replies': [],
+            'payout_string': get_payout_string(float(post_content['pending_payout_value'].split(' ')[0]) + float(post_content['total_payout_value'].split(' ')[0])),
+    }
     for reply in replies:
         comment = {
             'author': reply['author'],
@@ -281,12 +289,12 @@ def replies(author=None, permlink=None):
             'payout_string': get_payout_string(float(reply['pending_payout_value'].split(' ')[0]) + float(reply['total_payout_value'].split(' ')[0])),
             'body': markdown_to_safe_html(reply['body']),
             'reply_count': int(reply['children']),
+            'active_votes': reply['active_votes'],
             'upvotes': 0,
             'downvotes': 0
         }
-        comments.append(comment)
-    return jsonify(comments)
-
+        data['replies'].append(comment)
+    return jsonify(data)
 
 # todo - implement for when users click on payout, to show breakdown from db
 @app.route('/f/api/votes/@<author>/<permlink>')
@@ -299,10 +307,10 @@ def votes(author=None, permlink=None):
 
 # testing steem request for getting content and nested replies
 @app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/state/<category>/@<author>/<permlink>')
-def state(category, author, permlink):
+def debug_state(category, author, permlink):
     path = category + '/@' + author + '/' + permlink
     content = steem.get_state(path)
-    return str(content)
+    return jsonify(content)
 
 @app.route('/f/api/' + app.config['DEBUGGING_KEY'] + '/vtp/@<author>/<permlink>')
 def vote_time_profile(author, permlink):

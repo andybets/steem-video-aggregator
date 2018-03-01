@@ -73,7 +73,7 @@
 
       // add basic keyboard shortcuts
       var cmp = this;
-      window.key_listener = function(event) {
+      window.video_key_listener = function(event) {
         if (event.keyCode == 32) { // spacebar play/pause
           if (cmp.player.getPlayerState() == 1) {
             event.preventDefault();
@@ -96,12 +96,12 @@
           }
         }
       }
-      window.addEventListener('keydown', window.key_listener);
+      window.addEventListener('keydown', window.video_key_listener);
 
     },
     beforeDestroy: function() {
       this.player.destroy();
-      window.removeEventListener('keydown', window.key_listener);
+      window.removeEventListener('keydown', window.video_key_listener);
     }
   }
 </script>
