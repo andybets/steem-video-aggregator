@@ -285,7 +285,7 @@ def state(category, author, permlink):
             'author': reply['author'],
             'permlink': reply['permlink'],
             'age_string': get_age_string(datetime.strptime(reply['created'], '%Y-%m-%dT%H:%M:%S')),
-            'created': datetime.strptime(reply['created'], '%Y-%m-%dT%H:%M:%S'),
+            'created': reply['created'],
             'payout_string': get_payout_string(float(reply['pending_payout_value'].split(' ')[0]) + float(reply['total_payout_value'].split(' ')[0])),
             'body': markdown_to_safe_html(reply['body']),
             'reply_count': int(reply['children']),

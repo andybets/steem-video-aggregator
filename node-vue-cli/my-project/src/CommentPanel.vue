@@ -5,12 +5,12 @@
         <!-- if top level, body and some interactions parts are handled by playpage, so don't include again //-->
         <b-row v-if="topLevel">
           <b-col>
-            <comment-interactions-panel :author="author" :permlink="permlink" :showVotesPanel="false" :openCommentInputPanel="true" @submittedComment="updateReplies"></comment-interactions-panel>
+            <comment-interactions-panel :author="author" :permlink="permlink" :showVotesPanel="false" :openCommentInputPanel="true" @submittedComment="updateReplies" @startCommentEditing="startCommentEditing"></comment-interactions-panel>
           </b-col>
         </b-row>
         <b-row v-if="topLevel" v-for="comment in replies" :key="comment.permlink">
           <b-col>
-            <comment-panel :category="comment.category" :author="comment.author" :permlink="comment.permlink" :replyCount="comment.reply_count" :body="comment.body" :initialPayoutString="comment.payout_string" :initialUpVoted="comment.up_voted" :initialDownVoted="comment.down_voted" :load="false"></comment-panel>
+            <comment-panel :category="comment.category" :author="comment.author" :permlink="comment.permlink" :replyCount="comment.reply_count" :body="comment.body" :initialPayoutString="comment.payout_string" :ageString="comment.age_string" :initialUpVoted="comment.up_voted" :initialDownVoted="comment.down_voted" :load="false"></comment-panel>
           </b-col>
         </b-row>
 
@@ -31,13 +31,36 @@
                     </b-row>
                     <b-row>
                       <b-col>
-                        <div v-html="body"></div>
+
+                        <b-container fluid v-if="comment_edit_mode">
+                          <b-row class="py-1">
+                            <b-col>
+                              <b-form-textarea 
+                                v-model="comment_body" 
+                                :rows="1" 
+                                :max-rows="5" 
+                                :disabled="is_comment_editor_disabled" >
+                              </b-form-textarea>
+                            </b-col>
+                          </b-row>
+                          <b-row class="py-1">
+                            <b-col>
+                              <div class="float-right">
+                                <b-button variant="link" :disabled="is_comment_editor_disabled" @click="cancelCommentEditing">Cancel</b-button>
+                                <b-button variant="success" :disabled="is_comment_editor_disabled" @click="updateComment">Save</b-button>
+                              </div>
+                            </b-col>
+                          </b-row>
+                        </b-container>
+
+                        <div v-else v-html="comment_body"></div>
+
                       </b-col>
                     </b-row>
 
                     <b-row>
                       <b-col>
-                        <comment-interactions-panel :author="author" :permlink="permlink" :showVotesPanel="true" :openCommentInputPanel="false" :payoutString="initialPayoutString" :upVoted="initialUpVoted" :downVoted="initialDownVoted" @submittedComment="updateReplies"></comment-interactions-panel>
+                        <comment-interactions-panel :author="author" :permlink="permlink" :showVotesPanel="true" :openCommentInputPanel="false" :payoutString="initialPayoutString" :upVoted="initialUpVoted" :downVoted="initialDownVoted" @submittedComment="updateReplies" @startCommentEditing="startCommentEditing"></comment-interactions-panel>
                       </b-col>
                     </b-row>
 
@@ -49,7 +72,7 @@
 
                     <b-row v-show="loaded_replies" v-for="comment in replies" :key="comment.permlink">
                       <b-col>
-                        <comment-panel :category="comment.category" :author="comment.author" :permlink="comment.permlink" :replyCount="comment.reply_count" :body="comment.body" :initialPayoutString="comment.payout_string" :initialUpVoted="comment.up_voted" :initialDownVoted="comment.down_voted" :load="false"></comment-panel>
+                        <comment-panel :category="comment.category" :author="comment.author" :permlink="comment.permlink" :replyCount="comment.reply_count" :body="comment.body" :initialPayoutString="comment.payout_string" :ageString="comment.age_string" :initialUpVoted="comment.up_voted" :initialDownVoted="comment.down_voted" :load="false"></comment-panel>
                         
                       </b-col>
                     </b-row>
@@ -105,7 +128,6 @@
                 }
               }
             }
-
             replies.sort(compare);
             this.replies = replies;
             this.loaded_replies = true;
@@ -116,6 +138,30 @@
       updateReplies: function() {
         this.fetchData();
       },
+
+      startCommentEditing: function() {
+        this.comment_edit_mode = true;        
+      },
+      cancelCommentEditing: function() {
+        this.comment_body = this.pre_edit_body;
+        this.comment_edit_mode = false;
+      },
+      updateComment: function() {
+//        var jsonMetadata = { "tags": ["steem"], "app":"multi.tube/0.4" };
+        var jsonMetadata = { app:"multi.tube/0.4" };
+        var success_callback = this.updatedComment;
+        var error_callback = this.updateCommentError;
+        this.is_comment_editor_disabled = true;
+        this.$globals.comment(this.$parent.author, this.$parent.permlink, this.$globals.username, this.permlink, '', this.comment_body, jsonMetadata, false, success_callback, error_callback);
+      },
+      updatedComment: function() {
+        this.is_comment_editor_disabled = false;
+        this.comment_edit_mode = false;
+      },
+      updateCommentError: function(e) {
+        this.is_comment_editor_disabled = false;
+        alert('Sorry, your comment update was not saved. Please try again. ' + e);
+      }
 
     },
     watch: {
@@ -129,6 +175,10 @@
         replies: [],
         reply_input_open: false,
         payout_string: '',
+        comment_body: this.body,
+        pre_edit_body: this.body,
+        comment_edit_mode: false,
+        is_comment_editor_disabled: false
     }
   }
 }

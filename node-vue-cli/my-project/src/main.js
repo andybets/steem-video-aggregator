@@ -208,7 +208,7 @@ const globals = new Vue({
             });
         },
 
-        comment: function(parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, success_callback, error_callback) {
+        comment: function(parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, send_comment_options, success_callback, error_callback) {
             const operations = [];
 
             const commentOp = [
@@ -242,7 +242,7 @@ const globals = new Vue({
               ]
             }]];
 
-            if (extensions) {
+            if (send_comment_options && extensions) {
                 commentOptionsConfig.extensions = extensions;
                 commentOptionsConfig.percent_steem_dollars = 10000;
                 commentOptionsConfig.max_accepted_payout = '1000000.000 SBD';

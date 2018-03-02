@@ -56,6 +56,9 @@
     </span>
 
     <span class="action-link" style="vertical-align:middle" @click="is_comment_input_panel_open=!is_comment_input_panel_open" v-show="!is_comment_input_panel_open" v-text="'Reply'"></span>
+      &nbsp;&nbsp;
+
+    <span v-if="$globals.username==author" class="action-link" style="vertical-align:middle" v-text="'Edit'" @click="startCommentEditing"></span>
 
     <div v-show="is_comment_input_panel_open">
       <b-container fluid class="commentinteractionspanel">
@@ -123,7 +126,7 @@
         var success_callback = this.submittedComment;
         var error_callback = this.submitCommentError;
         this.is_comment_input_panel_disabled = true;
-        this.$globals.comment(this.author, this.permlink, this.$globals.username, new_permlink, '', this.text, jsonMetadata, success_callback, error_callback)
+        this.$globals.comment(this.author, this.permlink, this.$globals.username, new_permlink, '', this.text, jsonMetadata, true, success_callback, error_callback)
       },
       submittedComment: function() {
         // update parent
@@ -177,6 +180,10 @@
       },
       closeVoteContributions: function() {
         this.show_vote_contributions = false;
+      },
+
+      startCommentEditing: function() {
+        this.$emit('startCommentEditing');
       }
 
 
