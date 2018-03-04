@@ -12,6 +12,7 @@ import PlayerDtube from './PlayerDtube.vue'
 import PlayerDlive from './PlayerDlive.vue'
 import CommentPanel from './CommentPanel.vue'
 import CommentInteractionsPanel from './CommentInteractionsPanel.vue'
+import VideoOverlayPanel from './VideoOverlayPanel.vue'
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
@@ -40,6 +41,7 @@ Vue.component('player-dtube', PlayerDtube);
 Vue.component('player-dlive', PlayerDlive);
 Vue.component('comment-panel', CommentPanel);
 Vue.component('comment-interactions-panel', CommentInteractionsPanel);
+Vue.component('video-overlay-panel', VideoOverlayPanel);
 
 export const bus = new Vue();
 
@@ -172,7 +174,9 @@ const globals = new Vue({
                     localStorage.setItem("token", access_token);
                     localStorage.setItem("userImageURL", 'access_token');
                     t.loggedIn = true;
-                    router.replace(window.location.pathname);
+                    if (window.location.search.indexOf('token=') >= 0) {
+                        router.replace(window.location.pathname);
+                    }
 //                    console.log(user);
 //                    console.log(metadata);
                 } else {

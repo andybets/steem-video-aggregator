@@ -182,6 +182,7 @@
       return {
         info: {},
         video_id: '',
+        video_head: this.$route.query.t,
         vote_percent: this.$globals.default_vote_percent,
         up_vote_hover: false,
         down_vote_hover: false,
