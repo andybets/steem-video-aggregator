@@ -79,7 +79,6 @@ def markdown_to_safe_html(s):
         html = html.replace('<br><br><br>', '<br><br>')
     return html
 
-
 def get_valid_video(comment): # returns
     try:
         body = comment['body']

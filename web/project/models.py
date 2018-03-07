@@ -21,6 +21,7 @@ class SteemAccount(db.Model):
     author = db.Column(db.String, primary_key=True)
     info = db.Column(db.JSON, nullable=True)
 
+# todo - removing scoring fields from main table for more efficient updates
 class Post(db.Model):
     __tablename__ = "posts"
 #    author_account = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=True)
@@ -52,7 +53,7 @@ class Post(db.Model):
     video_post_publish_delay_seconds = db.Column(db.Integer, nullable=True)
     description = db.Column(db.String, nullable=True)
 
-    # experimental fields for basic collarorative filter and votes sparkline
+    # fields for basic collaborative filter and votes sparkline
     voters_list = db.Column(db.String, nullable=True)
     voters_list_ts_vector = create_tsvector(
         cast(func.coalesce(func.lower(voters_list), ''), postgresql.TEXT)
