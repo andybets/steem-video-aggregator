@@ -88,12 +88,7 @@ class Post(db.Model):
     index_1 = db.Index('posts_idx_1', trending_score)
     index_2 = db.Index('posts_idx_2', hot_score)
     index_4 = db.Index('posts_idx_4', pending_payout_value)
-    index_5 = db.Index('posts_idx_5', category, trending_score)
-    index_6 = db.Index('posts_idx_6', category, hot_score)
-    index_7 = db.Index('posts_idx_7', category, other_score)
-    index_8 = db.Index('posts_idx_8', category, pending_payout_value)
     index_9 = db.Index('posts_idx_9', created.desc())
-    index_10 = db.Index('posts_idx_10', category, created.desc())
     index_11 = db.Index('posts_idx_11', pending_video_info_update, video_info_update_requested,
                         postgresql_where=(pending_video_info_update))
     index_12 = db.Index('posts_idx_12', pending_steem_info_update, steem_info_update_requested,
