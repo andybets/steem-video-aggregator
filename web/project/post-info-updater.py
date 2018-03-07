@@ -63,8 +63,8 @@ class PostUpdateThread(Thread):
         self.app = app
         self.db = db
 
-    # update scores of posts created within last week, set older post scores to 0
-    def updatePostScores(self):
+    # update scores of posts created within 24 hours
+    def updateRecentPostScores(self):
         try:
             q = '''
                     update posts set
@@ -73,6 +73,24 @@ class PostUpdateThread(Thread):
                         hot_score =
                         (sqrt(pending_payout_value - least(9.99, pending_payout_value)) * 1000000) / (EXTRACT(EPOCH FROM current_timestamp - created) + 60)
                         where EXTRACT(EPOCH FROM current_timestamp - created) > 600
+                        and EXTRACT(EPOCH FROM current_timestamp - created) <= 86400
+                    '''
+            db.engine.execute(text(q).execution_options(autocommit=True))
+
+        except Exception as e:
+            log('Failed to update recent scores...')
+            log(str(e))
+
+    # update scores of posts created within last week (but not within 24 hours, set older post scores to 0
+    def updateOlderPostScores(self):
+        try:
+            q = '''
+                    update posts set
+                        trending_score =
+                        (pow(pending_payout_value, 0.4) * 1000000) / pow(EXTRACT(EPOCH FROM current_timestamp - created) + 300, 0.2),
+                        hot_score =
+                        (sqrt(pending_payout_value - least(9.99, pending_payout_value)) * 1000000) / (EXTRACT(EPOCH FROM current_timestamp - created) + 60)
+                        where EXTRACT(EPOCH FROM current_timestamp - created) > 86400
                         and EXTRACT(EPOCH FROM current_timestamp - created) < 604800
                     '''
             db.engine.execute(text(q).execution_options(autocommit=True))
@@ -85,7 +103,7 @@ class PostUpdateThread(Thread):
             db.engine.execute(text(q).execution_options(autocommit=True))
 
         except Exception as e:
-            log('Failed to update scores...')
+            log('Failed to update older scores...')
             log(str(e))
 
     # query Steem API node for up to date content, and add to post
@@ -133,6 +151,7 @@ class PostUpdateThread(Thread):
             post.pending_steem_info_update = False
             post.steem_info_update_requested = None
             db.session.commit()
+            log('Committed vote add!')
             return post
         except Exception as e:
             log('Problem updating Steem info for: @' + post.author + '/' + post.permlink + '!')
@@ -143,6 +162,7 @@ class PostUpdateThread(Thread):
 
     # query youtube/dtube/vimeo for up to date content, and add to post
     def update_video_info(self, post):
+        log(post.author + '/' + post.permlink)
         try:
             if post.video_type == 'youtube':
                 video_id = post.video_id
@@ -150,7 +170,7 @@ class PostUpdateThread(Thread):
                 # url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2Cstatus%2Cplayer&id=' + video_id + '&key=' + video_api_key
                 url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails&id=' + video_id + '&key=' + video_api_key
                 try:
-                    js = requests.get(url).json()
+                    js = requests.get(url, timeout=2).json()
                 except Exception as e:
                     log(url)
                     log('Problem accessing YouTube Video info for: @' + post.author + '/' + post.permlink + '!')
@@ -174,9 +194,8 @@ class PostUpdateThread(Thread):
                 try:
                     url = 'https://steemit.com/dtube/@' + post.author + '/' + post.permlink + '.json'
                     try:
-                        js = requests.get(url).json()['post']
+                        js = requests.get(url, timeout=2).json()['post']
                     except Exception as e:
-                        log(url)
                         log('Problem accessing DTube Video info for: @' + post.author + '/' + post.permlink + '!')
                         time.sleep(5)
                         return
@@ -199,7 +218,7 @@ class PostUpdateThread(Thread):
                 try:
                     url = 'https://steemit.com/dlive/@' + post.author + '/' + post.permlink + '.json'
                     try:
-                        js = requests.get(url).json()['post']
+                        js = requests.get(url, timeout=2).json()['post']
                     except Exception as e:
                         log(url)
                         log('Problem accessing DLive Video info for: @' + post.author + '/' + post.permlink + '!')
@@ -236,32 +255,45 @@ class PostUpdateThread(Thread):
         return post
 
     # query thread to update posts with pending update, and perform them
-    # also update trending/hot scores every 5 minutes
+    # also update trending/hot scores every 5 minutes for recent posts and every hour for older ones
+    # at 2018-03-05 reduced BLOCK IO to 10.5GB/h
     def run(self):
-        last_updated_post_scores = datetime.now() - timedelta(seconds=240)
+        last_updated_recent_post_scores = datetime.now() - timedelta(seconds=240)
+        last_updated_older_post_scores = datetime.now() - timedelta(seconds=3540)
         while True:
             time.sleep(0.5)
 
-            # update post scores every 5 minutes
-            if (datetime.now() - last_updated_post_scores).seconds > 300:
-                log('Updating post scores...')
-                self.updatePostScores()
-                last_updated_post_scores = datetime.now()
-                log('Updated post scores!')
+            try:
+                # update recent post scores every 5 minutes
+                if (datetime.now() - last_updated_recent_post_scores).seconds > 300:
+                    log('##### Updating recent post scores...')
+                    self.updateRecentPostScores()
+                    last_updated_recent_post_scores = datetime.now()
+                    log('Updated recent post scores!')
 
-            post = db.session.query(Post) \
-                .filter(Post.pending_video_info_update).order_by(Post.video_info_update_requested).first()
-            if post:
-                post = self.update_steem_info(post)
-                if post:
-                    post = self.update_video_info(post)
-            else:
+                # update older post scores every hour
+                if (datetime.now() - last_updated_older_post_scores).seconds > 3600:
+                    log('##### Updating older post scores...')
+                    self.updateOlderPostScores()
+                    last_updated_older_post_scores = datetime.now()
+                    log('Updated older post scores!')
+
                 post = db.session.query(Post) \
-                    .filter(Post.pending_steem_info_update).order_by(Post.steem_info_update_requested).first()
+                    .filter(Post.pending_video_info_update).order_by(Post.video_info_update_requested).first()
                 if post:
                     post = self.update_steem_info(post)
+                    if post:
+                        post = self.update_video_info(post)
                 else:
-                    time.sleep(1)
+                    post = db.session.query(Post) \
+                        .filter(Post.pending_steem_info_update).order_by(Post.steem_info_update_requested).first()
+                    if post:
+                        post = self.update_steem_info(post)
+                    else:
+                        time.sleep(1)
+            except Exception as e:
+                log('Error in post-info-updater--run: ' + str(e))
+                time.sleep(20)
 
 
 time.sleep(10)
