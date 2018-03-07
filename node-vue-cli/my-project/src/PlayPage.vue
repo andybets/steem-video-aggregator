@@ -137,7 +137,7 @@
                       <b-container class="pt-2 mx-0">
                         <b-row no-gutters>
                           <b-col>
-                            <comment-panel :topLevel="true" :category="info.category" :author="info.author" :permlink="info.permlink" :replyCount="1" :load="true" :body="''" :ageString="''"></comment-panel>
+                            <comment-panel :topLevel="true" :category="info.category" :author="author" :permlink="permlink" :replyCount="1" :load="true" :body="''" :ageString="''"></comment-panel>
                           </b-col>
                         </b-row>
                       </b-container>

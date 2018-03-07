@@ -273,12 +273,19 @@ def video(author=None, permlink=None):
 def state(category, author, permlink):
     path = category + '/@' + author + '/' + permlink
     state = steem.get_state(path)
+
+    # handles cases where errors return random Steem content!
+    if len(state['error']) > 0:
+        js = {'error': 'could not get state for ' + path, 'replies': [], 'payout_string': '' }
+        return jsonify(js)
+
     content = state['content']
     post_content = content[author + '/' + permlink]
     reply_urls = post_content['replies']
     replies = [content[x] for x in reply_urls]
-    data = {'replies': [],
-            'payout_string': get_payout_string(float(post_content['pending_payout_value'].split(' ')[0]) + float(post_content['total_payout_value'].split(' ')[0])),
+    data = {'error': '',
+            'replies': [],
+            'payout_string': get_payout_string(float(post_content['pending_payout_value'].split(' ')[0]) + float(post_content['total_payout_value'].split(' ')[0]))
     }
     for reply in replies:
         comment = {
