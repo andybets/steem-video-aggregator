@@ -60,6 +60,7 @@ services:
   postgres:
     restart: always
     image: "postgres:9.6"
+    command: postgres -c 'shared_buffers=1024MB' -c 'max_connections=25'
     cpus: 0.5
     env_file:
       - ./credentials.env
