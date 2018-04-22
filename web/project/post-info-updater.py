@@ -201,7 +201,7 @@ class PostUpdateThread(Thread):
                         return
                     metadata = js.get('json_metadata', '[]')
                     post.video_thumbnail_image_url = 'https://ipfs.io/ipfs/' + metadata['video']['info']['snaphash']
-                    post.video_duration_seconds = metadata['video']['info']['duration']
+                    post.video_duration_seconds = int(metadata['video']['info']['duration'])
                     post.video_provider_channel_id = ''
                     post.video_post_publish_delay_seconds = 0
                     # todo - decide which metadata to store in DB
@@ -264,15 +264,15 @@ class PostUpdateThread(Thread):
             time.sleep(0.5)
 
             try:
-                # update recent post scores every 5 minutes
-                if (datetime.now() - last_updated_recent_post_scores).seconds > 300:
+                # update recent post scores every 15 minutes
+                if (datetime.now() - last_updated_recent_post_scores).seconds > 900:
                     log('##### Updating recent post scores...')
                     self.updateRecentPostScores()
                     last_updated_recent_post_scores = datetime.now()
                     log('Updated recent post scores!')
 
-                # update older post scores every hour
-                if (datetime.now() - last_updated_older_post_scores).seconds > 3600:
+                # update older post scores every two hours
+                if (datetime.now() - last_updated_older_post_scores).seconds > 7200:
                     log('##### Updating older post scores...')
                     self.updateOlderPostScores()
                     last_updated_older_post_scores = datetime.now()
