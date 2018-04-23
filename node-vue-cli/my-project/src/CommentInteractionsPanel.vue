@@ -121,8 +121,8 @@
       },
       submitComment: function() {
         var new_permlink = this.permlink + '-' + Date.now();
-//        var jsonMetadata = { "tags": ["steem"], "app":"multi.tube/0.4" };
-        var jsonMetadata = { app:"multi.tube/0.4" };
+//        var jsonMetadata = { "tags": ["steem"], "app":"steemvids/0.1" };
+        var jsonMetadata = { app:"steemvids/0.1" };
         var success_callback = this.submittedComment;
         var error_callback = this.submitCommentError;
         this.is_comment_input_panel_disabled = true;
