@@ -147,8 +147,8 @@
         this.comment_edit_mode = false;
       },
       updateComment: function() {
-//        var jsonMetadata = { "tags": ["steem"], "app":"multi.tube/0.4" };
-        var jsonMetadata = { app:"multi.tube/0.4" };
+//        var jsonMetadata = { "tags": ["steem"], "app":"steemvids/0.1" };
+        var jsonMetadata = { app:"steemvids/0.1" };
         var success_callback = this.updatedComment;
         var error_callback = this.updateCommentError;
         this.is_comment_editor_disabled = true;

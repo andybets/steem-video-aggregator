@@ -159,7 +159,7 @@
                 <b-container class="rightpanel-placeholder">
                   <b-row>
                     <b-col>
-                      Right Panel Placeholder
+                      <!-- Right Panel Placeholder -->
                     </b-col>
                   </b-row>
                 </b-container>    

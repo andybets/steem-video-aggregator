@@ -123,7 +123,7 @@ const globals = new Vue({
             console.log('Incompatible filter settings. May not have fully loaded them.')
         }
 
-        steem.api.setOptions({ url: 'https://api.steemit.com' });
+        steem.api.setOptions({ url: 'https://rpc.steemviz.com' });
 
         // set appropriate SteemConnect callbackURL for local testing of production
         var callbackURL = '';
@@ -135,7 +135,7 @@ const globals = new Vue({
 
         sc2.init({
           baseURL: 'https://v2.steemconnect.com',
-          app: 'multitube.app',
+          app: 'steemvids.app',
           callbackURL: callbackURL,
           scope: ['vote', 'comment', 'comment_delete', 'comment_options', 'custom_json']
         });
@@ -240,8 +240,8 @@ const globals = new Vue({
             const extensions = [[0, {
               beneficiaries: [
                 {
-                  account: 'multi.tube',
-                  weight: 2500
+                  account: 'steemvids',
+                  weight: 1000
                 }
               ]
             }]];
