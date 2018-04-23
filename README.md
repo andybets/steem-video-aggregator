@@ -1,6 +1,7 @@
 # Steem Video Aggregator
 
 Project created and abandoned by andybets https://github.com/andybets/steem-video-aggregator
+
 Repurposed and rebranded for SteemVids by ausbitbank https://steemvids.com
 
 ## How to Run (for development)
