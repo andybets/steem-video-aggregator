@@ -2,8 +2,12 @@
   <div class='searchresultslistpage'>
 
     <b-container class="video-horizontal-panel">
-      <h4 v-if="videos.length>0" style="padding-left:10px">Results matching '{{ $route.params.search_terms }}'<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
-      <h4 v-else style="padding-left:10px">Sorry, No Search Results matching '{{ $route.params.search_terms }}'<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
+      <h4 v-if="videos.length>0" style="padding-left:10px">Results matching '{{ $route.params.search_terms }}'
+        <span style="color:red;font-size: 0.7em;" v-if="$globals.filter_included_tags.length==1" v-text="'(tag: ' + $globals.filter_included_tags[0] + ')'"></span>
+        <span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
+      <h4 v-else style="padding-left:10px">Sorry, No Search Results matching '{{ $route.params.search_terms }}'
+        <span style="color:red;font-size: 0.7em;" v-if="$globals.filter_included_tags.length==1" v-text="'(tag: ' + $globals.filter_included_tags[0] + ')'"></span>
+        <span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <b-row no-gutters v-for="v in videos" :key="v.author + v.permlink">
 
         <b-col cols="6" sm="auto">

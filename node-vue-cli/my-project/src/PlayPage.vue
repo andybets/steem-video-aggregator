@@ -31,7 +31,9 @@
                       <b-img-lazy :src="'https://steemitimages.com/u/' + info.author + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
                     </b-col>                    
                     <b-col>
-                      <span v-for="tag in info.tags"><b-badge v-text="tag" variant="secondary"></b-badge>&nbsp;</span><br>
+                      <span v-for="tag in info.tags">
+                        <b-badge class="tag-link" @click="tagClicked(tag)" v-text="tag" variant="secondary"></b-badge>&nbsp;
+                      </span><br>
                       <span class="author-link" @click="authorLinkClicked(info.author)"><b>{{ info.author }}</b></span>
                        - {{ info.age_string }}
                        on 
@@ -200,6 +202,9 @@
       authorLinkClicked: function(author) {
         bus.$emit('authorLinkClicked', author)
       },
+      tagClicked: function(tag) {
+        bus.$emit('tagClicked', tag)
+      },
       loadVideoInfo: function() {
         this.$http.get('/f/api/video/@' + this.author + '/' + this.permlink)
          .then(response => {
@@ -332,6 +337,10 @@ a {
   padding-bottom: 2em;
   margin-top:1em;
   background-color: white;
+}
+
+.tag-link {
+  cursor: pointer;
 }
 
 </style>

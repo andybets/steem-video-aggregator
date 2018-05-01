@@ -2,7 +2,9 @@
   <div class='thumbnailspage'>
 
     <b-container class="video-horizontal-panel">
-      <h4 v-if="videos.length>0" style="padding-left:10px">{{ page_title }}<span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
+      <h4 v-if="videos.length>0" style="padding-left:10px">{{ page_title }}
+        <span style="color:red;font-size: 0.7em;" v-if="$globals.filter_included_tags.length==1" v-text="'(tag: ' + $globals.filter_included_tags[0] + ')'"></span> 
+        <span style="color:red;font-size: 0.7em;" v-if="$globals.filter_not_default"> (filtered)</span></h4>
       <b-row>
 
         <b-col class="px-0" sm="6" md="4" lg="3" xl="2" v-for="v in videos" :key="v.author + v.permlink">

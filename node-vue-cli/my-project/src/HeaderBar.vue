@@ -298,6 +298,11 @@ export default {
     },
     closeLogoutPopover: function() {
       this.show_logout_popover = false;
+    },
+    goToHotForTag: function(tag) {
+      this.$globals.filter_included_tags.splice(0);
+      this.$globals.filter_included_tags.push(tag);
+      this.$router.replace('/hot');
     }
   },
   created() {
@@ -306,6 +311,7 @@ export default {
     }
     window.addEventListener('wheel', this.closeHeaderPanels);
     bus.$on('authorLinkClicked', this.openAuthorOptions);
+    bus.$on('tagClicked', this.goToHotForTag);
   },
   destroyed() {
     window.removeEventListener('wheel', this.closeHeaderPanels);
