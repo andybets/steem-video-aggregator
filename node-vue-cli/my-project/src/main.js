@@ -93,6 +93,8 @@ const globals = new Vue({
             filter_included_voters: [],
             filter_excluded_authors: [],
             filter_included_authors: [],
+            filter_excluded_tags: [],
+            filter_included_tags: [],
             filter_reputation_active: 'false',
             filter_quick_play_enabled: 'false',
 
@@ -112,6 +114,8 @@ const globals = new Vue({
         filter_included_voters: function() { this.saveFilterValues() },
         filter_excluded_authors: function() { this.saveFilterValues() },
         filter_included_authors: function() { this.saveFilterValues() },
+        filter_excluded_tags: function() { this.saveFilterValues() },
+        filter_included_tags: function() { this.saveFilterValues() },
         filter_reputation_active: function() { this.saveFilterValues() },
         filter_quick_play_enabled: function() { this.saveFilterValues() }
     },
@@ -320,6 +324,7 @@ const globals = new Vue({
             // update state of preferences for visual indications
             if ((this.filter_exclude_old_video != 'true') || (this.filter_exclude_nsfw != 'true') 
                 || (this.filter_excluded_voters.length > 0) || (this.filter_included_voters.length > 0)
+                || (this.filter_excluded_tags.length > 0) || (this.filter_included_tags.length > 0)
                 || (this.filter_excluded_authors.length > 0) || (this.filter_included_authors.length > 0)) {
                 this.preferences_not_default = true;
             } else {
@@ -336,6 +341,8 @@ const globals = new Vue({
             localStorage.setItem('filter_included_voters', JSON.stringify(this.filter_included_voters));
             localStorage.setItem('filter_excluded_authors', JSON.stringify(this.filter_excluded_authors));
             localStorage.setItem('filter_included_authors', JSON.stringify(this.filter_included_authors));
+            localStorage.setItem('filter_excluded_tags', JSON.stringify(this.filter_excluded_tags));
+            localStorage.setItem('filter_included_tags', JSON.stringify(this.filter_included_tags));
             localStorage.setItem('filter_reputation_active', this.filter_reputation_active);
             localStorage.setItem('filter_quick_play_enabled', this.filter_quick_play_enabled);
             bus.$emit('filtersChanged'); // todo - prevent this firing several time on initial fetch if it does
@@ -352,6 +359,8 @@ const globals = new Vue({
                 this.filter_included_voters = JSON.parse(localStorage['filter_included_voters']);
                 this.filter_excluded_authors = JSON.parse(localStorage['filter_excluded_authors']);
                 this.filter_included_authors = JSON.parse(localStorage['filter_included_authors']);
+                this.filter_excluded_tags = JSON.parse(localStorage['filter_excluded_tags']);
+                this.filter_included_tags = JSON.parse(localStorage['filter_included_tags']);
                 this.filter_reputation_active = localStorage['filter_reputation_active'];
                 this.filter_quick_play_enabled = localStorage['filter_quick_play_enabled'];
             }

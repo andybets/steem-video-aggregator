@@ -143,6 +143,22 @@ def apply_filter_to_query(original_query, filter_data):
     if voter_filter_list:
         new_query = new_query.filter(or_(*voter_filter_list))
 
+    # tag exclusions filter (removes posts with any of first tags in filter)
+    exclusions_list = filter_data.get('filter_excluded_tags', [])[:10]
+    tags_filter_list = []
+    for account in exclusions_list:
+        tags_filter_list.append(Post.tags_ts_vector.match(account, postgresql_regconfig='english'))
+    if tags_filter_list:
+        new_query = new_query.filter(not_(or_(*tags_filter_list)))
+
+    # tag inclusions filter (requires posts with any of first tags in filter)
+    inclusions_list = filter_data.get('filter_included_tags', [])[:10]
+    tags_filter_list = []
+    for account in inclusions_list:
+        tags_filter_list.append(Post.tags_ts_vector.match(account, postgresql_regconfig='english'))
+    if tags_filter_list:
+        new_query = new_query.filter(or_(*tags_filter_list))
+
     return new_query
 
 def apply_sort_to_query(original_query, filter_data):
