@@ -215,6 +215,27 @@ def new_videos(limit="30"):
     except Exception as e:
         return str(e)
 
+@app.route('/f/api/account-videos/<author>/<limit>', methods=['GET', 'POST'])
+@app.route('/f/api/account-videos/<author>', methods=['GET', 'POST'])
+def account_videos(author, limit="30"):
+    limit = int(limit)
+    filter_data = {}
+    try:
+        author_filter = (Post.author == author)
+        query = db.session.query(Post).filter(author_filter)
+        if request.method == 'POST':
+            data = request.data
+            filter_data = json.loads(data)
+            query = apply_filter_to_query(query, filter_data)
+        # get more records than needed as post query filters may remove some
+        query = query.order_by(Post.created.desc()).limit(int(limit*1.2))
+        df = pd.read_sql(query.statement, db.session.bind)
+        df = create_video_summary_fields(df, filter_data)
+        df = df.head(limit)
+        return df.to_json(orient='records')
+    except Exception as e:
+        return str(e)
+
 @app.route('/f/api/search/<search_terms>/<limit>', methods=['GET', 'POST'])
 @app.route('/f/api/search/<search_terms>', methods=['GET', 'POST'])
 def search(search_terms, limit='50'):

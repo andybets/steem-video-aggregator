@@ -393,7 +393,10 @@ const router = new VueRouter({
             video_list_url: '/f/api/hot-videos' }},
         { path: '/new', component: ThumbnailsPage, props: { 
             page_title: 'New Videos', 
-            video_list_url: '/f/api/new-videos' }}
+            video_list_url: '/f/api/new-videos' }},
+        { path: '/@:author', component: ThumbnailsPage, props: { 
+            page_title: 'Account Videos', 
+            video_list_url: '/f/api/account-videos' }}
     ],
 
     // todo - improve scroll position retention

@@ -48,7 +48,7 @@
         </b-col>
 
         <infinite-loading ref="infiniteLoading" @infinite="infiniteHandler">
-          <span slot="no-results"></span>          
+          <span slot="no-results"></span>
         </infinite-loading>
 
       </b-row>
@@ -112,7 +112,13 @@
         var rr = this;
         setTimeout(function() {
           var rrr = rr;
-          rr.$http.post(rr.video_list_url + '/' + rr.thumbnail_target, filter_data)
+
+          var query_string = '';
+          if (rr.video_list_url == '/f/api/account-videos') {
+            query_string = '/' + rr.$route.params.author;
+          }
+
+          rr.$http.post(rr.video_list_url + query_string + '/' + rr.thumbnail_target, filter_data)
            .then(response => {
             rrr.videos = response.data.filter(function(result) {
               return true;
@@ -140,7 +146,13 @@
               filter_quick_play_enabled: this.$globals.filter_quick_play_enabled
             }
         // gets whole new results set rather than extending, as new entries could make using offsets difficult
-        this.$http.post(this.video_list_url + '/' + this.thumbnail_target, filter_data)
+        var query_string = '';
+        if (this.video_list_url == '/f/api/account-videos') {
+          query_string = '/' + this.$route.params.author;
+        }
+
+//        this.$http.post(this.video_list_url + '/' + this.thumbnail_target, filter_data)
+        this.$http.post(this.video_list_url + query_string + '/' + this.thumbnail_target, filter_data)
          .then(response => {
             console.log(response.body.length);
             this.videos = response.data.filter(function(result) {
