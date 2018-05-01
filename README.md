@@ -1,5 +1,7 @@
 # Steem Video Aggregator
 
+Development on this project is currently suspended due to the uncertainty/risk of running a site based on this code under UK jurisdiction.
+
 ## How to Run (for development)
 
 1. Install docker and docker-compose
