@@ -416,17 +416,32 @@ new Vue({
   },
   data: function() {
         return {
-            showDismissibleAlert: true
+            showDismissibleAlert: true,
+            showMainAlert: false
         }
     },
   methods: {
     hideCookieNotice: function() {
         this.showDismissibleAlert=false;
         localStorage.setItem("cookiesAccepted", 'Yes');
+    },
+    hideMainNotice: function() {
+        this.showMainAlert=false;
     }
   },
   template: `
         <div id="app">
+            <b-alert variant="primary" style="margin-bottom:3px" dismissible :show="showMainAlert" @dismissed="hideMainNotice">
+            <h5>
+            Notice (<a href="#" v-b-toggle.collapsemain>see more info</a>). 
+            </h5>
+            <b-collapse id="collapsemain">
+              <b-card>  
+                This is placeholder text for a notice which always appears at the top of the site.
+              </b-card>
+            </b-collapse>
+            </b-alert>
+
             <b-alert variant="primary" v-if="!$globals.cookiesAccepted" style="margin-bottom:3px" dismissible :show="showDismissibleAlert" @dismissed="hideCookieNotice">
             <h5>
             Using multi.tube means you agree to our <a href="#" v-b-toggle.collapse3>use of cookies</a>. 
