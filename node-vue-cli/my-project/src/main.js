@@ -405,7 +405,14 @@ const router = new VueRouter({
             video_list_url: '/f/api/new-videos' }},
         { path: '/@:author', component: ThumbnailsPage, props: { 
             page_title: 'Account Videos', 
-            video_list_url: '/f/api/account-videos' }}
+            video_list_url: '/f/api/account-videos' }},
+
+        // convenient advanced search urls
+        { path: '/advanced-search/:search_terms&tag=:tag&votedby=:votedby', component: SearchResultsListPage, props: true},
+        { path: '/advanced-search/:search_terms&votedby=:votedby&tag=:tag', component: SearchResultsListPage, props: true},
+        { path: '/advanced-search/:search_terms&tag=:tag', component: SearchResultsListPage, props: true},
+        { path: '/advanced-search/:search_terms&votedby=:votedby', component: SearchResultsListPage, props: true}
+
     ],
 
     // todo - improve scroll position retention

@@ -99,6 +99,9 @@
         }
         this.$router.push('/@' + author + '/' + permlink);
       },
+
+      // update filter if advanced search parameters are used
+
       fetchData: function() {
         this.search_results_target = 50;
         this.$refs.infiniteLoading.stateChanger.reset();
@@ -185,6 +188,25 @@
   },
   activated: function() {
     this.loadNewlyDisplayedImages();
+
+    // update filter if advanced search url was used
+    if (typeof this.$route.params.tag !== 'undefined' || 
+      typeof this.$route.params.votedby !== 'undefined') { 
+      this.$globals.filter_excluded_voters = [];
+      this.$globals.filter_included_voters = [];
+      this.$globals.filter_excluded_authors = [];
+      this.$globals.filter_included_authors = [];
+      this.$globals.filter_excluded_tags = [];
+      this.$globals.filter_included_tags = [];
+    }
+    if (typeof this.$route.params.tag !== 'undefined') { 
+      this.$globals.filter_included_tags = [this.$route.params.tag];
+      this.$globals.preferences_not_default = true;
+    }
+    if (typeof this.$route.params.votedby !== 'undefined') { 
+      this.$globals.filter_included_voters = [this.$route.params.votedby];
+      this.$globals.preferences_not_default = true;
+    }
 
     var cmp = this;
     setTimeout(function() {
