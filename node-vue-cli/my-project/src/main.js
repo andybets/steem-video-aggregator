@@ -141,7 +141,7 @@ const globals = new Vue({
           baseURL: 'https://v2.steemconnect.com',
           app: 'multitube.app',
           callbackURL: callbackURL,
-          scope: ['vote', 'comment', 'comment_delete', 'comment_options', 'custom_json']
+          scope: ['vote', 'comment', 'delete_comment', 'comment_options', 'custom_json']
         });
 
         if (localStorage.getItem("cookiesAccepted") === null) {
