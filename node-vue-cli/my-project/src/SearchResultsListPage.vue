@@ -100,8 +100,6 @@
         this.$router.push('/@' + author + '/' + permlink);
       },
 
-      // update filter if advanced search parameters are used
-
       fetchData: function() {
         this.search_results_target = 50;
         this.$refs.infiniteLoading.stateChanger.reset();
