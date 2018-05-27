@@ -252,6 +252,43 @@ def account_videos(author, limit="30"):
     except Exception as e:
         return str(e)
 
+@app.route('/f/api/related-videos/<author>/<limit>', methods=['GET', 'POST'])
+@app.route('/f/api/related-videos/<author>', methods=['GET', 'POST'])
+def related_videos(author, limit="30"):
+    limit = int(limit)
+    filter_data = {}
+    try:
+        # get author videos
+        author_filter = (Post.author == author)
+        query = db.session.query(Post).filter(Post.created > (datetime.now() - timedelta(days=7))).filter(author_filter)
+        if request.method == 'POST':
+            data = request.data
+            filter_data = json.loads(data)
+            query = apply_filter_to_query(query, filter_data)
+        # get more records than needed as post query filters may remove some
+        query = query.order_by(Post.created.desc()).limit(int(limit*1.2))
+        author_df = pd.read_sql(query.statement, db.session.bind)
+
+        # get author voted videos
+        query = db.session.query(Post).filter(Post.created > (datetime.now() - timedelta(days=7))).filter(Post.voters_list_ts_vector.match(author, postgresql_regconfig='english'))
+        if request.method == 'POST':
+            data = request.data
+            filter_data = json.loads(data)
+            query = apply_filter_to_query(query, filter_data)
+        # get more records than needed as post query filters may remove some
+        query = query.order_by(Post.created.desc()).limit(int(limit*1.2))
+        author_voted_df = pd.read_sql(query.statement, db.session.bind)
+
+        # append both results sets to final list
+        df = author_df.append(author_voted_df)
+
+        df = create_video_summary_fields(df, filter_data)
+        df = df.drop_duplicates()
+        df = df.head(limit)
+        return df.to_json(orient='records')
+    except Exception as e:
+        return str(e)
+
 @app.route('/f/api/search/<search_terms>/<limit>', methods=['GET', 'POST'])
 @app.route('/f/api/search/<search_terms>', methods=['GET', 'POST'])
 def search(search_terms, limit='50'):

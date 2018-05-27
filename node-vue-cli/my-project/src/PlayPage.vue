@@ -161,7 +161,7 @@
                 <b-container class="rightpanel-placeholder">
                   <b-row>
                     <b-col>
-                      Right Panel Placeholder
+                      <related-video-panel></related-video-panel>
                     </b-col>
                   </b-row>
                 </b-container>    
@@ -198,6 +198,7 @@
         show_vote_contributions: false
       }
     },
+
     methods: {
       authorLinkClicked: function(author) {
         bus.$emit('authorLinkClicked', author)

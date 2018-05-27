@@ -13,6 +13,7 @@ import PlayerDlive from './PlayerDlive.vue'
 import CommentPanel from './CommentPanel.vue'
 import CommentInteractionsPanel from './CommentInteractionsPanel.vue'
 import VideoOverlayPanel from './VideoOverlayPanel.vue'
+import RelatedVideoPanel from './RelatedVideoPanel.vue'
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
@@ -42,6 +43,7 @@ Vue.component('player-dlive', PlayerDlive);
 Vue.component('comment-panel', CommentPanel);
 Vue.component('comment-interactions-panel', CommentInteractionsPanel);
 Vue.component('video-overlay-panel', VideoOverlayPanel);
+Vue.component('related-video-panel', RelatedVideoPanel);
 
 export const bus = new Vue();
 
@@ -475,7 +477,7 @@ new Vue({
             </b-alert>
             <header-bar></header-bar>
             <keep-alive :include='["homepage", "searchresultslistpage", "thumbnailspage"]'>
-                <router-view></router-view>
+                <router-view :key="$route.fullPath"></router-view>
             </keep-alive>
         </div>
         `
