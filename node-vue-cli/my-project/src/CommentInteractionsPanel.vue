@@ -68,7 +68,7 @@
             <b-container class="py-0 px-0">
               <b-row no-gutters>
                 <b-col cols="auto flex-nowrap">
-                  <b-img onerror="this.src='https://steemitimages.com/u/avatarblank/avatar/small'" :src="'https://steemitimages.com/u/' + $globals.username + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
+                  <b-img onerror="this.src='/dist/images/missing-avatar.png'" :src="'https://steemitimages.com/u/' + $globals.username + '/avatar/small'" rounded="circle" blank-color="#777" style="width:40px;height:40px"/>
                 </b-col>
                 <b-col cols="">
                   <b-container fluid>
