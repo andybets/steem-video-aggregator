@@ -51,7 +51,8 @@
       loadVideo: function() {
         var video = document.getElementById('player');
         var source = document.createElement('source');
-        source.setAttribute('src', 'https://ipfs.io/ipfs/' + this.videoid);
+//        source.setAttribute('src', 'https://ipfs.io/ipfs/' + this.videoid);
+        source.setAttribute('src', 'https://video.dtube.top/ipfs/' + this.videoid);
         video.appendChild(source);
         video.play();
         if (typeof this.$route.query.t !== 'undefined') {
